@@ -1,0 +1,44 @@
+@font-face {
+    font-family: 'Museosans';
+    src: url('./../Assets/fonts/museosans.ttf');
+}
+
+@font-face {
+    font-family: 'PWHappyChristmas';
+    src: url('./../Assets/fonts/PWHappyChristmas.ttf');
+}
+
+body {
+    font-family: 'Museosans', sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+body.theme-dark {
+    background-image: url('./../Assets/img/bgpattern.png');
+    background-repeat: repeat;
+    background-size: 30px;
+}
+
+body.theme-light {
+    background-color: var(--color-surface);
+    background-image: none;
+}
+
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+#ErrorText {
+    display: none;
+}
+
+
+ #ErrorText {
+  padding-top: 10%;
+  justify-content: center;
+  text-align: center;
+  color: var(--font-color);
+}

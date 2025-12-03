@@ -4,10 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Movie-lage</title>
-  <link href="./css/style.css" rel="stylesheet"/>
-  <link href="./css/style.css" rel="stylesheet"/>
+  <link href="./css/styles.css" rel="stylesheet"/>
 </head>
 <body class="theme-light">
+
+
+
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+
 
     <header class="navbar">
       <a id="DarkLightMode">Movie-lage</a>
@@ -20,7 +27,7 @@
 
 <section class="heroPage">
     <div id="ErrorText">
-        <h1 id="ErrorText" class="ErrorText">Oops! Something went wrong.</h1>
+        <h1 class="ErrorText">Oops! Something went wrong.</h1>
         <p>We couldn’t load the data. Please try again later.</p>
     </div>
 
@@ -33,5 +40,6 @@
 
 
   <script type="module" src="./js/main.js"></script>
+  <script type="module" src="./js/utils/loader.js"></script>
 </body>
 </html>
