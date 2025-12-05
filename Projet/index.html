@@ -5,41 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Movie-lage</title>
   <link href="./css/styles.css" rel="stylesheet"/>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
 </head>
 <body class="theme-light">
 
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
 
+  <header class="navbar">
+    <button id="DarkLightMode" aria-label="Toggle Dark/Light Mode">Movie-lage</button>
 
-    <div id="loader">
-        <div class="spinner"></div>
+    <div class="search-bar">
+      <input type="search" id="site-search" placeholder="Type your search..." />
+      <button class="search-logo" aria-label="Search"></button>
     </div>
 
+    <nav class="link">
+      <a id="home" href="#">Home</a>
+      <a id="search" href="#">Search</a>
+      <a id="favorites" href="#">Favorites</a>
+      <a id="watchlist" href="#">Watchlist</a>
+    </nav>
+  </header>
 
 
-    <header class="navbar">
-      <a id="DarkLightMode">Movie-lage</a>
-    <div class="link">
-      <a id="Home" href="#" class="Acceuil">Home</a>
-      <a id="Search" href="#" class="Searchbar">Search</a>
-      <a id="Favorites" href="#" class="EffectICON">Favorites</a>
-    </div>
-    </header>
 
-<section class="heroPage">
-    <div id="ErrorText">
-        <h1 class="ErrorText">Oops! Something went wrong.</h1>
-        <p>We couldn’t load the data. Please try again later.</p>
-    </div>
+  <div id="ErrorText">
+    <h1>Oups! Something went wrong.</h1>
+    <p>We couldn’t load the data. Please try again later.</p>
+  </div>
 
-</section>
+  <div id="noError">
 
 
-    <div id="notification">
-        <h1 id="theNotification"></h1>
-    </div>
+
+  <section class="heroPage" data-aos="fade-up" data-aos-duration="3000">
+    <div class="hero"></div>
+  </section>
+
+  <section class="tendance" data-aos="fade-up" data-aos-duration="2000">
+    <h1>The movie of the moment</h1>
+    <div class="movie-container"></div>
+  </section>
 
 
-  <script type="module" src="./js/main.js"></script>
+
+
+  </div>
+
+
+  <div id="notification">
+    <h1 id="theNotification"></h1>
+  </div>
+
+  <script type="module" src="./js/api.js"></script>
   <script type="module" src="./js/utils/loader.js"></script>
+  <script type="module" src="./js/utils/theme.js"></script>
+  <script type="module" src="./js/main.js"></script>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init(); 
+  </script>
+
+
+
+
+
+
 </body>
 </html>

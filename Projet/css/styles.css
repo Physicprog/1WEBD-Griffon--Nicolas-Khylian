@@ -1,6 +1,8 @@
 @import url("./color-shema.css");
 @import url("./loader.css");
-@import url("./navbar.css");
+@import url("./pages/navbar.css");
 @import url("./notification.css");
 @import url("./overall.css");
 @import url("./responsive.css");
+@import url("./card.css");
+@import url("./pages/hero-page.css");

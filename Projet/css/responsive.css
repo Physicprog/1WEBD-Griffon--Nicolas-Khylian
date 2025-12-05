@@ -27,6 +27,23 @@
   #theNotification {
     font-size: 15px;
   }
+    .tendance {
+    gap: 18px;
+    padding: 18px;
+  }
+  
+  .card {
+    width: 180px;
+    max-width: 180px;
+  }
+  
+  .card img {
+    height: 200px;
+  }
+  
+  .container {
+    padding: 10px;
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -54,6 +71,68 @@
 
   #theNotification {
     font-size: 14px;
+  }
+
+  .tendance {
+    padding: 10px;
+    gap: 12px;
+  }
+
+  .card {
+    width: 160px;
+  }
+
+  .card img {
+    width: 160px;
+    height: 240px;
+  }
+
+  .container {
+    padding: 10px;
+  }
+
+  .container h4 {
+    font-size: 14px;
+  }
+
+  .star {
+    width: 14px;
+    height: 14px;
+  }
+
+  .container p {
+    font-size: 12px;
+  }
+    .tendance {
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .card {
+    width: 100%;
+    max-width: 350px;
+  }
+  
+  .card img {
+    height: 240px;
+  }
+  
+  .container {
+    padding: 12px;
+  }
+  
+  .card h4 {
+    font-size: 15px;
+    height: 39px;
+  }
+  
+  .rate img.star {
+    width: 15px;
+    height: 15px;
+  }
+  
+  .card p {
+    font-size: 13px;
   }
 }
 
@@ -86,6 +165,36 @@
   #theNotification {
     font-size: 13px;
   }
+    .tendance {
+    gap: 14px;
+    padding: 14px;
+  }
+  
+  .card {
+    max-width: 100%;
+  }
+  
+  .card img {
+    height: 220px;
+  }
+  
+  .container {
+    padding: 10px;
+  }
+  
+  .card h4 {
+    font-size: 14px;
+    height: 36px;
+  }
+  
+  .rate img.star {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .card p {
+    font-size: 12px;
+  }
 }
 
 @media screen and (max-width: 280px) {
@@ -115,5 +224,31 @@
 
   #theNotification {
     font-size: 12px;
+  }
+  .tendance {
+    gap: 12px;
+    padding: 12px;
+  }
+  
+  .card img {
+    height: 200px;
+  }
+  
+  .container {
+    padding: 8px;
+  }
+  
+  .card h4 {
+    font-size: 13px;
+    height: 34px;
+  }
+  
+  .rate img.star {
+    width: 13px;
+    height: 13px;
+  }
+  
+  .card p {
+    font-size: 11px;
   }
 }

@@ -1,37 +1,36 @@
 const themeToggle = document.getElementById("DarkLightMode");
+const light = 'theme-light';
+const dark = 'theme-dark';
 
-const THEME_KEY = 'theme'; //la cles dans le local storage
-const LIGHT = 'theme-light';
-const DARK = 'theme-dark';
-
-if (!localStorage.getItem(THEME_KEY)) {
-  localStorage.setItem(THEME_KEY, LIGHT);
+let currentTheme = localStorage.getItem('theme');
+if (!currentTheme) {
+  currentTheme = light;
 }
 
 export function applyTheme(theme) {
-  if (theme === DARK) {
-    document.body.classList.add(DARK);
-    document.body.classList.remove(LIGHT);
-    if (themeToggle) themeToggle.classList.add(DARK);
-    localStorage.setItem(THEME_KEY, DARK);
-  } else {
-    document.body.classList.add(LIGHT);
-    document.body.classList.remove(DARK);
-    if (themeToggle) themeToggle.classList.remove(DARK);
-    localStorage.setItem(THEME_KEY, LIGHT);
+  document.body.classList.remove(light, dark);
+  document.body.classList.add(theme);
+  if (themeToggle) {
+    if (theme === dark) {
+      themeToggle.classList.add(dark);
+    } else {
+      themeToggle.classList.remove(dark);
+    }
   }
+  localStorage.setItem('theme', theme);
+  currentTheme = theme;
 }
 
 export function toggleTheme() {
-  const current = localStorage.getItem(THEME_KEY) || LIGHT;
-  applyTheme(current === DARK ? LIGHT : DARK);
-}
-
-export function initTheme() {
-  applyTheme(localStorage.getItem(THEME_KEY));
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      toggleTheme();
-    });
+  if (currentTheme === dark) {
+    applyTheme(light);
+  } else {
+    applyTheme(dark);
   }
 }
+
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', toggleTheme);
+}
+applyTheme(currentTheme);
