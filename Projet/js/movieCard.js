@@ -84,6 +84,9 @@ vote_count
 : 
 Object
 */
+
+import { sendNotification } from "./utils/notif.js";
+
 export function movieToDico(movie) {
     if (!movie) return {};
     const dict = {};
@@ -140,29 +143,51 @@ export function createStarRating(movie) {
 export function createMovieImage(movie) {
     const dict = movieToDico(movie);
     const img = document.createElement('img');
-
-    if (!dict.poster_path) {
-        img.src = './../Assets/img/NoPreview.png';
-        container.appendChild(img);
-        return container;
-    }
-
     const chemin = dict.poster_path;
-    img.src = 'https://image.tmdb.org/t/p/w500/' + chemin;
+    
+    if (chemin === 'null') {
+        img.src = './../Assets/img/NoPreview.gif';
+    } else {
+        img.src = 'https://image.tmdb.org/t/p/w500/' + chemin;
+    }
+    
     return img;
 }
 
 export function createMovieTitle(movie) {
     const dict = movieToDico(movie);
-    const h4 = document.createElement('h4');
-    h4.textContent = dict.title;
-    return h4;
+    const h5 = document.createElement('h5');
+    const textMovie = dict.title;
+
+    if (!textMovie || textMovie === 'null') {
+        h5.textContent = "Title not available";
+        return h5;
+    }
+
+    const max = 25;
+    let finalTitle = textMovie;
+    if (textMovie.length > max) {
+        finalTitle = textMovie.slice(0, max) + "...";
+        h5.addEventListener('click', () => {
+            sendNotification(`Movie Title: ${textMovie}`, true, 4500)
+        });
+    }
+
+    h5.textContent = finalTitle;  
+    return h5;
 }
+
 
 export function createMovieYear(movie) {
     const dict = movieToDico(movie);
     const p = document.createElement('p');
     const date = dict.release_date;
+
+    if (!date || date === 'null' || date.length < 4) {
+        p.textContent = "Date not available";
+        return p;
+    }
+
     const annee = date.substring(0, 4);
     p.textContent = annee;
     return p;
@@ -172,6 +197,22 @@ export function caption(movie) {
     const dict = movieToDico(movie);
     const p = document.createElement('p');
     const text = dict.overview;
+
+
+    if (!text || text === 'null') {
+        p.textContent = "Date not available";
+        return p;
+    }
+
+
+    const max = 650;
+    if (text.length > max) {
+        text = text.slice(0, max) + "...";
+        h5.addEventListener('click', () => {
+            sendNotification(`Movie caption: ${text}`, true, 12000)
+        });
+    }
+
 
     p.textContent = text;
     return p;

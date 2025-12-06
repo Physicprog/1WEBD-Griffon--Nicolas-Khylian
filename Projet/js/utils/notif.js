@@ -1,4 +1,4 @@
-export function sendNotification(message, color = true) {
+export function sendNotification(message, color = true, duration = 3500) {
     const notification = document.getElementById("notification");
     const theNotification = document.getElementById("theNotification");
     if (color) {
@@ -11,5 +11,5 @@ export function sendNotification(message, color = true) {
 
     theNotification.textContent = message;
     notification.classList.add("show");
-    setTimeout(() => notification.classList.remove("show"), 3500);
+    setTimeout(() => notification.classList.remove("show"), duration);
 }

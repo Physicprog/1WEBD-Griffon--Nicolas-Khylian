@@ -1,0 +1,69 @@
+.hero {
+    position: relative;
+    background-image: url('./../../Assets/img/hero-image.webp');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 400px; /* ajuste selon ton besoin */
+    margin-top: 0; /* espace sous la navbar, ajuste si nécessaire */
+}
+
+.hero-text {
+    position: absolute;
+    top: 50%; /* centre verticalement */
+    left: 50%; /* centre horizontalement */
+    transform: translate(-50%, -50%); /* ajuste le centrage exact */
+    color: white; /* texte visible sur l'image */
+    text-align: center;
+}
+
+.hero-text h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.hero-text p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.heroPage a {
+    text-decoration: none;
+    margin: 8px;
+    padding: 10px 20px;
+    border: 3px solid #000;
+    text-align: left;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px #000;
+    background: #5a9fd4;
+    box-shadow: 10px 5px 5px #2a5f84;
+    transition: transform 0.05s cubic-bezier(.63,0,.33,.99);
+
+}
+
+.heroPage a:hover {
+    background: #6ab5ea;
+    box-shadow: 10px 5px 5px #2a5f84;
+}
+
+.heroPage a:active {
+    transition: transform 10ms;
+    transform: scale(0.9);
+    background: #4a8fc4;
+    box-shadow: 10px 5px 5px #2a5f84;
+    filter: brightness(0.9);
+}
+
+.search-hero{
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    flex-direction: row;
+}
+
+.search-hero input {
+    padding:  10px 25px;
+}
