@@ -86,8 +86,11 @@ Object
 */
 
 import { sendNotification } from "./utils/notif.js";
+import { loadHistory } from './getMovie.js';
+import { saveMovie, removeMovie, getSavedMovies } from './utils/HistoryLocalStorage.js';
 
-export function movieToDico(movie) {
+
+function movieToDico(movie) {
     if (!movie) return {};
     const dict = {};
     for (let i in movie) {
@@ -110,7 +113,59 @@ export function movieToDico(movie) {
     return dict;
 }
 
-export function createStarRating(movie) {
+
+function createFavoriteButton(movie) {
+    const button = document.createElement('img');
+    button.className = 'favorite-btn';
+    button.alt = 'Favorite';
+    const savedMovies = getSavedMovies();
+    let isMovieFavorite = false;
+    
+    for (let i = 0; i < savedMovies.length; i++) {
+        if (savedMovies[i].id === movie.id) {
+            isMovieFavorite = true;
+            break;
+        }
+    }
+    if (isMovieFavorite) {
+        button.src = './../Assets/img/1.png'; //plein
+    } else {
+        button.src = './../Assets/img/2.png'; //vide
+    }
+
+    button.addEventListener('click', function(event) {
+        event.stopPropagation();
+
+        const currentSavedMovies = getSavedMovies();
+        let isFavoriteNow = false;
+        
+        for (let i = 0; i < currentSavedMovies.length; i++) {
+            if (currentSavedMovies[i].id === movie.id) {
+                isFavoriteNow = true;
+                break;
+            }
+        }
+        if (isFavoriteNow) {
+            removeMovie(movie.id);
+            button.src = './../Assets/img/2.png'; 
+            sendNotification(`"${movie.title}" removed from favorites!`, false, 3000);
+        } else {
+            saveMovie(movie);
+            button.src = './../Assets/img/1.png'; 
+            sendNotification(`"${movie.title}" added to favorites!`, true, 3000);
+        }
+
+        const historyContainer = document.querySelector('.movie-history');
+        if (historyContainer) {
+            loadHistory();
+        }
+    });
+    return button;
+}
+
+
+
+function createStarRating(movie) {
     const dict = movieToDico(movie);
     const rate = Math.round(parseFloat(dict.vote_average) / 2); 
     
@@ -137,10 +192,29 @@ export function createStarRating(movie) {
         container.appendChild(star);
     }
     
+    // Ajoute le bouton favori après les étoiles
+    container.appendChild(createFavoriteButton(movie));
+    
     return container;
 }
 
-export function createMovieImage(movie) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function createMovieImage(movie) {
     const dict = movieToDico(movie);
     const img = document.createElement('img');
     const chemin = dict.poster_path;
@@ -154,7 +228,7 @@ export function createMovieImage(movie) {
     return img;
 }
 
-export function createMovieTitle(movie) {
+function createMovieTitle(movie) {
     const dict = movieToDico(movie);
     const h5 = document.createElement('h5');
     const textMovie = dict.title;
@@ -164,7 +238,7 @@ export function createMovieTitle(movie) {
         return h5;
     }
 
-    const max = 25;
+    const max = 18;
     let finalTitle = textMovie;
     if (textMovie.length > max) {
         finalTitle = textMovie.slice(0, max) + "...";
@@ -178,7 +252,7 @@ export function createMovieTitle(movie) {
 }
 
 
-export function createMovieYear(movie) {
+function createMovieYear(movie) {
     const dict = movieToDico(movie);
     const p = document.createElement('p');
     const date = dict.release_date;
@@ -193,10 +267,10 @@ export function createMovieYear(movie) {
     return p;
 }
 
-export function caption(movie) {
+function caption(movie, smallOverview = false) {
     const dict = movieToDico(movie);
     const p = document.createElement('p');
-    const text = dict.overview;
+    var text = dict.overview;
 
 
     if (!text || text === 'null') {
@@ -204,22 +278,26 @@ export function caption(movie) {
         return p;
     }
 
-
-    const max = 650;
+    if(smallOverview === true) {
+    const max = 35;
     if (text.length > max) {
         text = text.slice(0, max) + "...";
-        h5.addEventListener('click', () => {
-            sendNotification(`Movie caption: ${text}`, true, 12000)
-        });
-    }
-
+    }};
 
     p.textContent = text;
     return p;
 }
 
 
-export function createMovieCard(movie, options = ['title', 'rating', 'year', 'overview', 'image']) {
+
+
+
+
+
+
+
+
+export function createMovieCard(movie, options = ['title', 'rating', 'year', 'overview', 'image'], smallOverview = false) {
     const card = document.createElement('div');
     card.className = 'card';
 
@@ -238,11 +316,11 @@ export function createMovieCard(movie, options = ['title', 'rating', 'year', 'ov
                 container.appendChild(createMovieYear(movie));
                 break;
             case 'overview':
-                container.appendChild(caption(movie));
+                container.appendChild(caption(movie, smallOverview));
                 break;
             case 'image':
-                card.appendChild(caption(movie));
-                break
+                card.appendChild(caption(movie, false));
+                break;
             case 'poster':
                 card.appendChild(createMovieImage(movie));
                 break;
@@ -250,5 +328,16 @@ export function createMovieCard(movie, options = ['title', 'rating', 'year', 'ov
     });
     
     card.appendChild(container);
+    
+    card.addEventListener('click', () => {
+        const saved = saveMovie(movie);
+        if (saved) {
+            sendNotification(`"${movie.title}" saved!`, true, 3000);
+            loadHistory(); // Rafraîchit l'historique
+        } else {
+            sendNotification(`"${movie.title}" already saved!`, false, 3000);
+        }
+    });
+    
     return card;
 }

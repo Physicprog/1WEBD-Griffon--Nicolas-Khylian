@@ -69,6 +69,7 @@ export async function getRandomMovies() {
 async function runGallerie() {
     await tryFetchAPI();
     loadTendance();
-    loadRandomMovies()
+    loadRandomMovies();
 }
 runGallerie()
+
