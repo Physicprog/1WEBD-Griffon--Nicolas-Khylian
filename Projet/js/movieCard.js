@@ -87,7 +87,7 @@ Object
 
 import { sendNotification } from "./utils/notif.js";
 import { loadHistory } from './getMovie.js';
-import { saveMovie, removeMovie, getSavedMovies } from './utils/HistoryLocalStorage.js';
+import { saveMovie, removeMovie, getSavedMovies } from './utils/FavLocalStorage.js';
 
 
 function movieToDico(movie) {
@@ -114,52 +114,32 @@ function movieToDico(movie) {
 }
 
 
-function createFavoriteButton(movie) {
+export function createFavoriteButton(movie) {
     const button = document.createElement('img');
     button.className = 'favorite-btn';
     button.alt = 'Favorite';
-    const savedMovies = getSavedMovies();
-    let isMovieFavorite = false;
-    
-    for (let i = 0; i < savedMovies.length; i++) {
-        if (savedMovies[i].id === movie.id) {
-            isMovieFavorite = true;
-            break;
-        }
-    }
-    if (isMovieFavorite) {
-        button.src = './../Assets/img/1.png'; //plein
-    } else {
-        button.src = './../Assets/img/2.png'; //vide
-    }
+
+    const isFavorite = getSavedMovies().some(m => m.id === movie.id);
+    button.src = isFavorite ? './../Assets/img/1.png' : './../Assets/img/2.png';
 
     button.addEventListener('click', function(event) {
         event.stopPropagation();
 
-        const currentSavedMovies = getSavedMovies();
-        let isFavoriteNow = false;
-        
-        for (let i = 0; i < currentSavedMovies.length; i++) {
-            if (currentSavedMovies[i].id === movie.id) {
-                isFavoriteNow = true;
-                break;
-            }
-        }
+        const isFavoriteNow = getSavedMovies().some(m => m.id === movie.id);
+
         if (isFavoriteNow) {
             removeMovie(movie.id);
-            button.src = './../Assets/img/2.png'; 
+            button.src = './../Assets/img/2.png';
             sendNotification(`"${movie.title}" removed from favorites!`, false, 3000);
         } else {
             saveMovie(movie);
-            button.src = './../Assets/img/1.png'; 
+            button.src = './../Assets/img/1.png';
             sendNotification(`"${movie.title}" added to favorites!`, true, 3000);
         }
 
-        const historyContainer = document.querySelector('.movie-history');
-        if (historyContainer) {
-            loadHistory();
-        }
+        loadHistory();
     });
+
     return button;
 }
 
@@ -171,7 +151,13 @@ function createStarRating(movie) {
     
     const container = document.createElement('div');
     container.className = 'rate';
-    
+
+
+    container.addEventListener('click', function(event) { 
+        event.stopPropagation();
+    });
+
+
     if (rate === 0) {
         const p = document.createElement('p');
         p.textContent = 'Not rated yet';
@@ -191,8 +177,6 @@ function createStarRating(movie) {
         star.className = 'star';
         container.appendChild(star);
     }
-    
-    // Ajoute le bouton favori après les étoiles
     container.appendChild(createFavoriteButton(movie));
     
     return container;
@@ -242,8 +226,9 @@ function createMovieTitle(movie) {
     let finalTitle = textMovie;
     if (textMovie.length > max) {
         finalTitle = textMovie.slice(0, max) + "...";
-        h5.addEventListener('click', () => {
-            sendNotification(`Movie Title: ${textMovie}`, true, 4500)
+        h5.addEventListener('click', function(event) {
+            event.stopPropagation();  
+            sendNotification(`Movie Title: ${textMovie}`, true, 4500);
         });
     }
 
@@ -330,13 +315,8 @@ export function createMovieCard(movie, options = ['title', 'rating', 'year', 'ov
     card.appendChild(container);
     
     card.addEventListener('click', () => {
-        const saved = saveMovie(movie);
-        if (saved) {
-            sendNotification(`"${movie.title}" saved!`, true, 3000);
-            loadHistory(); // Rafraîchit l'historique
-        } else {
-            sendNotification(`"${movie.title}" already saved!`, false, 3000);
-        }
+        saveMovie(movie); 
+        window.location.href = "movie.html?id=" + movie.id;
     });
     
     return card;

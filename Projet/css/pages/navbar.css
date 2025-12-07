@@ -25,13 +25,11 @@
   cursor: pointer;
 }
 
-#DarkLightMode:hover,
-.search-logo:hover {
+#DarkLightMode:hover{
   transform: scale(1.05);
 }
 
-#DarkLightMode:active,
-.search-logo:active {
+#DarkLightMode:active{
   transform: scale(0.95);
 }
 
@@ -69,26 +67,6 @@
     align-items: center;
     flex-direction: row;
 }
-
-.search-logo {
-  width: 28px;
-  height: 28px;
-  background-image: url('./../../Assets/img/search.png');
-  background-size: 28px 28px;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.8;
-  cursor: pointer;
-}
-
-.theme-light .search-logo { 
-  filter: invert(0); 
-}
-
-.theme-dark .search-logo {
-   filter: invert(1);
-  }
-
 #site-search{
   border-radius: 12px;
   padding: 6px 10px;

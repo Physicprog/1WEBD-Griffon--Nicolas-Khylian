@@ -39,21 +39,50 @@
     color: #fff;
     text-shadow: 2px 2px #000;
     background: #5a9fd4;
-    box-shadow: 10px 5px 5px #2a5f84;
+    box-shadow: 6px 5px 15px #2a5f84;
     transition: transform 0.05s cubic-bezier(.63,0,.33,.99);
-
 }
+
+.heroPage a#btn-sec {
+    text-decoration: none;
+    margin: 8px;
+    padding: 10px 20px;
+    border: 3px solid #000;
+    text-align: left;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px #000;
+    background: #d32c85;
+    box-shadow: 6px 5px 15px #d32c85;
+    transition: transform 0.05s cubic-bezier(.63,0,.33,.99);
+}
+
+
 
 .heroPage a:hover {
     background: #6ab5ea;
-    box-shadow: 10px 5px 5px #2a5f84;
+    box-shadow: 6px 5px 15px #2a5f84;
 }
+
+.heroPage a#btn-sec:hover {
+    background: #ff44a8;
+    box-shadow: 6px 5px 15px #d7378c;
+}
+
 
 .heroPage a:active {
     transition: transform 10ms;
     transform: scale(0.9);
     background: #4a8fc4;
-    box-shadow: 10px 5px 5px #2a5f84;
+    box-shadow: 6px 5px 15px #2a5f84;
+    filter: brightness(0.9);
+}
+.heroPage a#btn-sec :active {
+    transition: transform 10ms;
+    transform: scale(0.9);
+    background: #d32c85;
+    box-shadow: 6px 5px 15px #ad256d;
     filter: brightness(0.9);
 }
 
