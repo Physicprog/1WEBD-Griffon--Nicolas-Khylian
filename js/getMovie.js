@@ -66,7 +66,7 @@ export function loadHistory() {
     }
 
     saved.forEach(movie => {
-        const card = createMovieCard(movie);
+        const card = createMovieCard(movie, ['title', 'poster', 'rating', 'overview'], true);
         container.appendChild(card);
     });
 }

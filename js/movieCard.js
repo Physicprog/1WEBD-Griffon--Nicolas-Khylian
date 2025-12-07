@@ -1,90 +1,3 @@
-/*{adult: false, backdrop_path: '/s3TBrRGB1iav7gFOCNx3H31MoES.jpg', belongs_to_collection: null, budget: 160000000, genres: Array(3), …}
-adult
-: 
-false
-backdrop_path
-: 
-"/s3TBrRGB1iav7gFOCNx3H31MoES.jpg"
-belongs_to_collection
-: 
-null
-budget
-: 
-160000000
-genres
-: 
-(3) [{…}, {…}, {…}]
-homepage
-: 
-"https://www.warnerbros.com/movies/inception"
-id
-: 
-27205
-imdb_id
-: 
-"tt1375666"
-origin_country
-: 
-(2) ['US', 'GB']
-original_language
-: 
-"en"
-original_title
-: 
-"Inception"
-overview
-: 
-"Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets is offered a chance to regain his old life as payment for a task considered to be impossible: \"inception\", the implantation of another person's idea into a target's subconscious."
-popularity
-: 
-23.0474
-poster_path
-: 
-"/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg"
-production_companies
-: 
-(3) [{…}, {…}, {…}]
-production_countries
-: 
-(2) [{…}, {…}]
-release_date
-: 
-"2010-07-15"
-revenue
-: 
-839030630
-runtime
-: 
-148
-spoken_languages
-: 
-(4) [{…}, {…}, {…}, {…}]
-status
-: 
-"Released"
-tagline
-: 
-"Your mind is the scene of the crime."
-title
-: 
-"Inception"
-video
-: 
-false
-videos
-: 
-{results: Array(21)}
-vote_average
-: 
-8.37
-vote_count
-: 
-38299
-[[Prototype]]
-: 
-Object
-*/
-
 import { sendNotification } from "./utils/notif.js";
 import { loadHistory } from './getMovie.js';
 import { saveMovie, removeMovie, getSavedMovies } from './utils/FavLocalStorage.js';
@@ -119,21 +32,40 @@ export function createFavoriteButton(movie) {
     button.className = 'favorite-btn';
     button.alt = 'Favorite';
 
-    const isFavorite = getSavedMovies().some(m => m.id === movie.id);
-    button.src = isFavorite ? './../Assets/img/1.png' : './../Assets/img/2.png';
+    const savedMovies = getSavedMovies();
+    let isFavorite = false;
+    for (let i = 0; i < savedMovies.length; i++) {
+        if (savedMovies[i].id === movie.id) {
+            isFavorite = true;
+            break;
+        }
+    }
+    
+    if (isFavorite) {
+        button.src = '/Assets/img/1.png';
+    } else {
+        button.src = '/Assets/img/2.png';
+    }
 
     button.addEventListener('click', function(event) {
         event.stopPropagation();
 
-        const isFavoriteNow = getSavedMovies().some(m => m.id === movie.id);
+        const savedMoviesNow = getSavedMovies();
+        let isFavoriteNow = false;
+        for (let i = 0; i < savedMoviesNow.length; i++) {
+            if (savedMoviesNow[i].id === movie.id) {
+                isFavoriteNow = true;
+                break;
+            }
+        }
 
         if (isFavoriteNow) {
             removeMovie(movie.id);
-            button.src = './../Assets/img/2.png';
+            button.src = '/Assets/img/2.png';
             sendNotification(`"${movie.title}" removed from favorites!`, false, 3000);
         } else {
             saveMovie(movie);
-            button.src = './../Assets/img/1.png';
+            button.src = '/Assets/img/1.png';
             sendNotification(`"${movie.title}" added to favorites!`, true, 3000);
         }
 
@@ -144,7 +76,6 @@ export function createFavoriteButton(movie) {
 }
 
 
-
 function createStarRating(movie) {
     const dict = movieToDico(movie);
     const rate = Math.round(parseFloat(dict.vote_average) / 2); 
@@ -152,16 +83,15 @@ function createStarRating(movie) {
     const container = document.createElement('div');
     container.className = 'rate';
 
-
     container.addEventListener('click', function(event) { 
         event.stopPropagation();
     });
-
 
     if (rate === 0) {
         const p = document.createElement('p');
         p.textContent = 'Not rated yet';
         container.appendChild(p);
+        container.appendChild(createFavoriteButton(movie));
         return container;
     }
 
@@ -169,33 +99,19 @@ function createStarRating(movie) {
         const star = document.createElement('img');
         
         if (i <= rate) {
-            star.src = './../Assets/img/fav.png';
+            star.src = '/Assets/img/fav.png'; 
         } else {
-            star.src = './../Assets/img/nofav.png';
+            star.src = '/Assets/img/nofav.png';
         }
         
         star.className = 'star';
         container.appendChild(star);
     }
+    
     container.appendChild(createFavoriteButton(movie));
     
     return container;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 function createMovieImage(movie) {
@@ -204,7 +120,7 @@ function createMovieImage(movie) {
     const chemin = dict.poster_path;
     
     if (chemin === 'null') {
-        img.src = './../Assets/img/NoPreview.gif';
+        img.src = '/Assets/img/NoPreview.gif';  
     } else {
         img.src = 'https://image.tmdb.org/t/p/w500/' + chemin;
     }
@@ -257,29 +173,21 @@ function caption(movie, smallOverview = false) {
     const p = document.createElement('p');
     var text = dict.overview;
 
-
     if (!text || text === 'null') {
         p.textContent = "Date not available";
         return p;
     }
 
     if(smallOverview === true) {
-    const max = 35;
-    if (text.length > max) {
-        text = text.slice(0, max) + "...";
-    }};
+        const max = 35;
+        if (text.length > max) {
+            text = text.slice(0, max) + "...";
+        }
+    }
 
     p.textContent = text;
     return p;
 }
-
-
-
-
-
-
-
-
 
 
 export function createMovieCard(movie, options = ['title', 'rating', 'year', 'overview', 'image'], smallOverview = false) {
@@ -304,7 +212,7 @@ export function createMovieCard(movie, options = ['title', 'rating', 'year', 'ov
                 container.appendChild(caption(movie, smallOverview));
                 break;
             case 'image':
-                card.appendChild(caption(movie, false));
+                card.appendChild(createMovieImage(movie, false));
                 break;
             case 'poster':
                 card.appendChild(createMovieImage(movie));
