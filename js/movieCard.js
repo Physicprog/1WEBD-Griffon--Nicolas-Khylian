@@ -42,9 +42,9 @@ export function createFavoriteButton(movie) {
     }
     
     if (isFavorite) {
-        button.src = '/Assets/img/1.png';
+        button.src = './Assets/img/1.png';
     } else {
-        button.src = '/Assets/img/2.png';
+        button.src = './Assets/img/2.png';
     }
 
     button.addEventListener('click', function(event) {
@@ -61,11 +61,11 @@ export function createFavoriteButton(movie) {
 
         if (isFavoriteNow) {
             removeMovie(movie.id);
-            button.src = '/Assets/img/2.png';
+            button.src = './Assets/img/2.png';
             sendNotification(`"${movie.title}" removed from favorites!`, false, 3000);
         } else {
             saveMovie(movie);
-            button.src = '/Assets/img/1.png';
+            button.src = './Assets/img/1.png';
             sendNotification(`"${movie.title}" added to favorites!`, true, 3000);
         }
 
@@ -99,9 +99,9 @@ function createStarRating(movie) {
         const star = document.createElement('img');
         
         if (i <= rate) {
-            star.src = '/Assets/img/fav.png'; 
+            star.src = './Assets/img/fav.png'; 
         } else {
-            star.src = '/Assets/img/nofav.png';
+            star.src = './Assets/img/nofav.png';
         }
         
         star.className = 'star';
@@ -120,7 +120,7 @@ function createMovieImage(movie) {
     const chemin = dict.poster_path;
     
     if (chemin === 'null') {
-        img.src = '/Assets/img/NoPreview.gif';  
+        img.src = './Assets/img/NoPreview.gif';  
     } else {
         img.src = 'https://image.tmdb.org/t/p/w500/' + chemin;
     }
