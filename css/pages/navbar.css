@@ -13,9 +13,29 @@
     box-sizing: border-box; 
 }
 
+.theme-dark #DarkLightMode {
+  background-image: url('./../../Assets/img/night.gif');
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 30px;
+  height: 30px;
+}
 
-#DarkLightMode {
+.theme-light #DarkLightMode {
+  background-image: url('./../../Assets/img/Sun.gif');
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 30px;
+  height: 30px;
+}
+
+
+
+
+#Logo {
   font-family: PWHappyChristmas;
+  text-decoration: none;
+  color: var(--font-color);
   flex-wrap: wrap;
   margin: 0;
   user-select: none;
@@ -25,21 +45,21 @@
   cursor: pointer;
 }
 
-#DarkLightMode:hover{
+#Logo:hover{
   transform: scale(1.05);
 }
 
-#DarkLightMode:active{
+#Logo:active{
   transform: scale(0.95);
 }
 
-.theme-light #DarkLightMode {
-  filter: invert(0);
-}
-.theme-dark #DarkLightMode {
-  filter: invert(1);
+.theme-light #Logo {
+  color: #000; 
 }
 
+.theme-dark #Logo {
+  color: #fff; 
+}
 
 
 .link {
@@ -75,6 +95,7 @@
 #site-search:focus{
   opacity: 0.95;
 }
+
 
 
 .input {

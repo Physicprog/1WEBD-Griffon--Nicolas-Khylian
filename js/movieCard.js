@@ -32,7 +32,7 @@ export function createFavoriteButton(movie) {
     button.className = 'favorite-btn';
     button.alt = 'Favorite';
 
-    const savedMovies = getSavedMovies();
+    const savedMovies = getSavedMovies('History');
     let isFavorite = false;
     for (let i = 0; i < savedMovies.length; i++) {
         if (savedMovies[i].id === movie.id) {
@@ -50,7 +50,7 @@ export function createFavoriteButton(movie) {
     button.addEventListener('click', function(event) {
         event.stopPropagation();
 
-        const savedMoviesNow = getSavedMovies();
+        const savedMoviesNow = getSavedMovies('History');
         let isFavoriteNow = false;
         for (let i = 0; i < savedMoviesNow.length; i++) {
             if (savedMoviesNow[i].id === movie.id) {
@@ -60,11 +60,11 @@ export function createFavoriteButton(movie) {
         }
 
         if (isFavoriteNow) {
-            removeMovie(movie.id);
+            removeMovie(movie.id, 'History');
             button.src = './Assets/img/2.png';
             sendNotification(`"${movie.title}" removed from favorites!`, false, 3000);
         } else {
-            saveMovie(movie);
+            saveMovie(movie, 'History');
             button.src = './Assets/img/1.png';
             sendNotification(`"${movie.title}" added to favorites!`, true, 3000);
         }

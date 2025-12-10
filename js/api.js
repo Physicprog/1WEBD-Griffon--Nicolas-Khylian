@@ -10,9 +10,6 @@ let erreurMessage = document.getElementById("ErrorText");
 let noerreurMessage = document.getElementById("noError");
 
 async function getMovieFromURL(url) {
-    if (!url) {
-        return;
-    }
     try {
         const response = await fetch(url);
         const data = await response.json();
@@ -22,7 +19,6 @@ async function getMovieFromURL(url) {
         console.log(error);
     }
 }
-
 
 async function tryFetchAPI() {
     const data = await getMovieFromURL(
@@ -36,7 +32,10 @@ async function tryFetchAPI() {
         return;
     }
 
-    sendNotification('Site loaded successfully. Welcome!', true);
+    if (window.location.href.includes( "movie.html") && i === true) {
+        sendNotification('Site loaded successfully. Welcome!', true);
+        
+    }
     erreurMessage.style.display = "none";
     noerreurMessage.style.display = "block";
 }
