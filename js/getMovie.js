@@ -73,58 +73,103 @@ export function clearHistory() {
     }
 }
 
-
-
-
 let searchInput = document.getElementById("site-search");
+let searchInputPage = document.getElementById("site-search-page");
 let SearchMovie = document.getElementById("searchForMovie");
-let noSearchMovie = document.getElementById("NoSearchMovie");
+let NoSearchMovie = document.getElementById("NoSearchMovie");
 
-searchInput.addEventListener('keyup', async () => {
-    const input = searchInput.value;
-    const results = await getMovieByName(input);
-
-    SearchMovie.innerHTML = '';
-    SearchMovie.className = 'card-search';
-
-    const title = document.createElement('h1');
-    title.textContent = 'Your movies search';
-    title.className = 'search-title';
-    SearchMovie.appendChild(title);
-
-    if (results) {
-        for (const movie of results) {
-            const movieCard = createMovieElement(movie, ['poster', 'title', 'rating', 'overview'], true, 'card', true);
-            SearchMovie.appendChild(movieCard);
+if (searchInput) {
+    searchInput.addEventListener('keyup', async () => {
+        const input = searchInput.value;
+        
+        if (input.trim() === '') {
+            SearchMovie.innerHTML = '';
+            SearchMovie.style.display = 'none';
+            if (NoSearchMovie) NoSearchMovie.style.display = 'block';
+            return;
         }
-        SearchMovie.style.display = 'block';
-        noSearchMovie.style.display = 'none';
-    } else {
-        const noResult = document.createElement('p');
-        noResult.innerHTML = 'No movie found<br>Enter a correct movie name to start';
-        noResult.className = 'search-message';
-        SearchMovie.appendChild(noResult);
-        noSearchMovie.style.display = 'none';
-        SearchMovie.style.display = 'block';
-    }
-});
 
+        const results = await getMovieByName(input);
 
-export async function LoadMovieDetails() {
+        SearchMovie.innerHTML = '';
+        SearchMovie.className = 'card-search';
+
+        const title = document.createElement('h1');
+        title.textContent = 'Your movies search';
+        title.className = 'search-title';
+        SearchMovie.appendChild(title);
+
+        if (results && results.length > 0) {
+            for (const movie of results) {
+                const movieCard = createMovieElement(movie, ['poster', 'title', 'rating', 'overview'], true, 'card', true);
+                SearchMovie.appendChild(movieCard);
+            }
+            SearchMovie.style.display = 'block';
+            if (NoSearchMovie) NoSearchMovie.style.display = 'none';
+        } else {
+            const noResult = document.createElement('p');
+            noResult.innerHTML = 'No movie found<br>Enter a correct movie name to start';
+            noResult.className = 'search-message';
+            SearchMovie.appendChild(noResult);
+            if (NoSearchMovie) NoSearchMovie.style.display = 'none';
+            SearchMovie.style.display = 'block';
+        }
+    });
+}
+
+if (searchInputPage) {
+    searchInputPage.addEventListener('keyup', async () => {
+        const input = searchInputPage.value;
+        
+        if (input.trim() === '') {
+            SearchMovie.innerHTML = '';
+            SearchMovie.style.display = 'none';
+            if (NoSearchMovie) NoSearchMovie.style.display = 'block';
+            return;
+        }
+
+        const results = await getMovieByName(input);
+
+        SearchMovie.innerHTML = '';
+        SearchMovie.className = 'card-search';
+
+        const title = document.createElement('h1');
+        title.textContent = 'Your movies search';
+        title.className = 'search-title';
+        SearchMovie.appendChild(title);
+
+        if (results && results.length > 0) {
+            for (const movie of results) {
+                const movieCard = createMovieElement(movie, ['poster', 'title', 'rating', 'overview'], true, 'card', true);
+                SearchMovie.appendChild(movieCard);
+            }
+            SearchMovie.style.display = 'block';
+            if (NoSearchMovie) NoSearchMovie.style.display = 'none';
+        } else {
+            const noResult = document.createElement('p');
+            noResult.innerHTML = 'No movie found<br>Enter a correct movie name to start';
+            noResult.className = 'search-message';
+            SearchMovie.appendChild(noResult);
+            if (NoSearchMovie) NoSearchMovie.style.display = 'none';
+            SearchMovie.style.display = 'block';
+        }
+    });
+}
+
+export async function loadMovieDetails() {
     const container = document.getElementById('movieDetailsCard');
     if (!container) return;
 
-    const params = new URLSearchParams(window.location.search);
-    const movieId = params.get('id');
+    const selectedMovieData = localStorage.getItem('selectedMovie');
     
-    if (!movieId) {
+    if (!selectedMovieData) {
         container.innerHTML = '<p>No movie selected</p>';
         return;
     }
 
     try {
-        const movie = await fetchMovie(movieId);
-        const credits = await fetchCredits(movieId);
+        const movie = JSON.parse(selectedMovieData);
+        const credits = await fetchCredits(movie.id);
 
         let posterUrl = './Assets/img/NoPreview.gif';
         if (movie.poster_path && movie.poster_path !== 'null' && movie.poster_path !== null) {
@@ -132,10 +177,9 @@ export async function LoadMovieDetails() {
         }
 
         let backdropUrl = './Assets/img/NoBackdrop.gif';
-        let backdropStyle = '';
         if (movie.backdrop_path && movie.backdrop_path !== 'null' && movie.backdrop_path !== null) {
             backdropUrl = `https://image.tmdb.org/t/p/original${movie.backdrop_path}`;
-            backdropStyle = 'filter: saturate(0) contrast(1.5) blur(2px);';
+            
         }
 
         let castHTML = '';
@@ -163,7 +207,7 @@ export async function LoadMovieDetails() {
         
         container.innerHTML = `
             <div class="details-backdrop">
-                <img src="${backdropUrl}" alt="backdrop" style="${backdropStyle}">
+                <img src="${backdropUrl}" alt="backdrop">
             </div>
 
             <div class="details-content">

@@ -44,3 +44,4 @@ export function removeMovie(movieId, key = 'History') {
 export function clearAllMovies(key = 'History') {
     localStorage.removeItem(key);
 }
+

@@ -3,8 +3,8 @@ import { sendNotification } from "./utils/notif.js";
 export const API_KEY = '4f914d881bdc09c47a4587b5a0a2c6c7';
 export const BASE_URL = 'https://api.themoviedb.org/3';
 
-let erreurMessage = document.getElementById("ErrorText");
-let noerreurMessage = document.getElementById("noError");
+export let erreurMessage = document.getElementById("ErrorText");
+export let noerreurMessage = document.getElementById("noError");
 
 async function getMovieFromURL(url) {
     try {

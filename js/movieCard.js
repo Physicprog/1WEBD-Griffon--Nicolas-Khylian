@@ -1,7 +1,6 @@
 import { sendNotification } from "./utils/notif.js";
-import { saveMovie, removeMovie, getSavedMovies } from './utils/FavLocalStorage.js';
+import { saveMovie, getSavedMovies, removeMovie } from './utils/FavLocalStorage.js';
 import { API_KEY, BASE_URL } from './api.js';
-
 
 export function movieToDico(movie) {
     if (!movie) return {};
@@ -191,7 +190,6 @@ export function createCastSection(credits) {
     return section;
 }
 
-
 export function createActorCard(actor) {
     const card = document.createElement('div');
     card.className = 'actor-card';
@@ -234,7 +232,7 @@ export function createMovieGain(movie) {
     const dict = movieToDico(movie);
     const p = document.createElement('p');
     const gain = Math.round(dict.revenue); 
-    if (!cost || cost === 0){
+    if (!gain || gain === 0){
         p.textContent = "Gain not available";
         return p;
     }
@@ -267,6 +265,7 @@ export function createMovieImage(movie) {
 
     return img;
 }
+
 export function createBackdropImage(movie) {
     const dict = movieToDico(movie);
     const backdropImg = document.querySelector('.details-backdrop img');
@@ -330,7 +329,7 @@ export function caption(movie, smallOverview = false) {
     }
 
     if(smallOverview === true) {
-        const max = 100;
+        const max = 40;
         if (text.length > max) {
             text = text.slice(0, max) + "...";
         }
@@ -397,8 +396,8 @@ export function createMovieElement(movie,
 
     if (cat === 'card' && select) {
         element.addEventListener('click', () => {
-            saveMovie(movie);
-            window.location.href = `movie.html?id=${movie.id}`;
+            localStorage.setItem('selectedMovie', JSON.stringify(movie));
+            window.location.href = `movie.html`;
         });
     }
 

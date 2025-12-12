@@ -1,23 +1,26 @@
+body{
+    overflow-x: hidden;
+}
+
 #movieDetailsCard {
     width: 100%;
     min-height: 100vh;
     background: var(--color-secondary);
 }
 
-.details-backdrop,
-.details-poster {
+.details-backdrop {
     width: 100%;
-    height: 400px;
+    height: 100vh;
     overflow: hidden;
     position: relative;
 }
 
-.details-backdrop img,
-.details-poster img {
+.details-backdrop img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
+
 
 .details-content {
     display: flex;
@@ -79,6 +82,11 @@
     cursor: pointer;
     transition: transform 0.2s;
     margin-left: 5px;
+    filter: invert(1);
+}
+
+.theme-light .rating-stars-container .favorite-btn{
+    filter: invert(0);
 }
 
 .rating-stars-container .favorite-btn:hover {
@@ -103,10 +111,9 @@
     background: var(--color-primary);
     border-radius: 20px;
     font-size: 14px;
-    color: #FFFFFF;
+    color: var(--color-text-light);
 }
 
-/* Description */
 .details-overview {
     font-size: 16px;
     line-height: 1.6;

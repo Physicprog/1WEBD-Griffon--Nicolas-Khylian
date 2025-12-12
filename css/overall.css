@@ -20,6 +20,9 @@ body {
     font-family: 'Museosans', sans-serif;
     padding: 0;
     margin: 0;
+    background-image: url('./../Assets/img/bgpattern.png');
+    background-repeat: repeat;
+    background-size: 30px;
 }
 
 button {
@@ -46,7 +49,7 @@ html {
 
 .card img,
 .movie-details-card .backdrop,
-.movie-details-content img.poster,
+.details-poster,
 .rate .star,
 .movie-details-content .favorite-btn,
 .favorite-btn {
