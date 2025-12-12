@@ -12,12 +12,12 @@
   <header class="navbar">
     <a id="Logo" href="index.html">Movie-lage</a>
 
-    <div class="search-bar">
-      <input type="search" id="site-search" class="input" placeholder="Type your search..." />
-    </div>
+    <div id="searchForMovie"></div>
+
+    <div id="NoSearchMovie"></div>
 
     <nav class="link">
-      <a  id="DarkLightMode"></a>
+      <a id="DarkLightMode"></a>
       <a id="search" href="Search.html">Search</a>
       <a id="watchlist" href="favorite.html">Watchlist</a>
     </nav>
@@ -29,10 +29,13 @@
   </div>
 
   <div id="noError">
-
-
+    <div id="site-search-container">
+      <input type="search" id="site-search-page" class="input" placeholder="Type your search..."/>
     </div>
 
+    <div id="searchForMovie"></div>
+    <div id="NoSearchMovie"></div>
+  </div>
 
   <div id="notification">
     <h1 id="theNotification"></h1>
@@ -47,11 +50,6 @@
   <script>
     AOS.init(); 
   </script>
-
-
-
-
-
 
 </body>
 </html>

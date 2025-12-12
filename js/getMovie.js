@@ -1,36 +1,29 @@
-import { getTrendingMovies, getRandomMovies, API_KEY, BASE_URL } from './api.js';
-import { createMovieCard } from './movieCard.js';
+import { getTrendingMovies, getRandomMovies, fetchMovie, getMovieByName } from './api.js';
+import { createMovieElement, formatDate, formatMoney, fetchCredits, createStarRating, createBackdropImage, createMovieImage } from './movieCard.js';
 import { getSavedMovies, clearAllMovies } from './utils/FavLocalStorage.js';
 import { sendNotification } from './utils/notif.js';
 
-export async function loadTendance(options = ['title', 'poster', 'rating', 'overview'], smallOverview = true) {
+export async function loadTendance(options = ['poster', 'title', 'rating', 'overview'], smallOverview = true) {
     const container = document.querySelector('.movie-container');
-    if (!container) {
-        console.error('Element .movie-container not found in the DOM');
-        return;
-    }
+    if (!container) return;
     container.innerHTML = ''; 
 
     const trendingMovies = await getTrendingMovies();
-    
-    for (let movie of trendingMovies) {
-        const carte = createMovieCard(movie, options, smallOverview);
-        container.appendChild(carte);
-    }
+    trendingMovies.forEach(movie => {
+        const card = createMovieElement(movie, options, smallOverview, 'card', true);
+        container.appendChild(card);
+    });
 }
 
-export function loadRandomMovies(options = ['title', 'poster', 'rating', 'overview'], smallOverview = true) {
+export function loadRandomMovies(options = ['poster', 'title', 'rating', 'overview'], smallOverview = true) {
     setTimeout(async () => {
         const container = document.querySelector('.movie-random');
-        if (!container) {
-            console.error('.movie-random not found in the DOM');
-            return;
-        }
-        
+        if (!container) return;
+
         try {
             const randomMovies = await getRandomMovies();
             randomMovies.forEach(movie => {
-                const card = createMovieCard(movie, options, smallOverview);
+                const card = createMovieElement(movie, options, smallOverview, 'card', true);
                 container.appendChild(card);
             });
         } catch (error) {
@@ -40,18 +33,16 @@ export function loadRandomMovies(options = ['title', 'poster', 'rating', 'overvi
 }
 
 var isLoading = false;
+window.addEventListener('scroll', async () => {
+    const position = window.innerHeight + window.scrollY;
+    const limite = document.body.offsetHeight;
 
-window.addEventListener("scroll", async () => {
-  const position = window.innerHeight + window.scrollY;
-  const limite = document.body.offsetHeight;
-
-  if (position >= limite - 100 && !isLoading) {
-    isLoading = true;
-    await loadRandomMovies(['title', 'poster', 'rating', 'overview'], true);
-    isLoading = false;
-  }
+    if (position >= limite - 100 && !isLoading) {
+        isLoading = true;
+        await loadRandomMovies();
+        isLoading = false;
+    }
 });
-
 
 export function loadHistory() {
     const container = document.querySelector('.movie-history');
@@ -60,51 +51,175 @@ export function loadHistory() {
     const saved = getSavedMovies();
     container.innerHTML = '';
 
-    if (saved.length === 0) {
+    if (!saved.length) {
         container.innerHTML = '<p>No movies saved yet</p>';
         return;
     }
 
     saved.forEach(movie => {
-        const card = createMovieCard(movie, ['title', 'poster', 'rating', 'overview'], true);
+        const card = createMovieElement(movie, ['poster', 'title', 'rating', 'overview'], false);
         container.appendChild(card);
     });
 }
 
 export function clearHistory() {
-    clearAllMovies();
-    loadHistory();
-    sendNotification('Favorites cleared!', true, 3000);
+    const saved = getSavedMovies(); 
+    if (saved.length) {
+        clearAllMovies();
+        loadHistory();
+        sendNotification('Favorites cleared!', true, 3000);
+    } else {
+        sendNotification('Already empty..', false, 3000);
+    }
 }
 
 
 
 
-export async function LoadMovieDetails(options = ['poster', 'title', 'rating', 'overview'], smallOverview = false) {
-    const container = document.querySelector('.movie-details');
-    if (!container) {
-        return;
+let searchInput = document.getElementById("site-search");
+let SearchMovie = document.getElementById("searchForMovie");
+let noSearchMovie = document.getElementById("NoSearchMovie");
+
+searchInput.addEventListener('keyup', async () => {
+    const input = searchInput.value;
+    const results = await getMovieByName(input);
+
+    SearchMovie.innerHTML = '';
+    SearchMovie.className = 'card-search';
+
+    const title = document.createElement('h1');
+    title.textContent = 'Your movies search';
+    title.className = 'search-title';
+    SearchMovie.appendChild(title);
+
+    if (results) {
+        for (const movie of results) {
+            const movieCard = createMovieElement(movie, ['poster', 'title', 'rating', 'overview'], true, 'card', true);
+            SearchMovie.appendChild(movieCard);
+        }
+        SearchMovie.style.display = 'block';
+        noSearchMovie.style.display = 'none';
+    } else {
+        const noResult = document.createElement('p');
+        noResult.innerHTML = 'No movie found<br>Enter a correct movie name to start';
+        noResult.className = 'search-message';
+        SearchMovie.appendChild(noResult);
+        noSearchMovie.style.display = 'none';
+        SearchMovie.style.display = 'block';
     }
+});
+
+
+export async function LoadMovieDetails() {
+    const container = document.getElementById('movieDetailsCard');
+    if (!container) return;
 
     const params = new URLSearchParams(window.location.search);
     const movieId = params.get('id');
-
+    
     if (!movieId) {
         container.innerHTML = '<p>No movie selected</p>';
         return;
     }
 
-    const url = `${BASE_URL}/movie/${movieId}?api_key=${API_KEY}`;
-
     try {
-        const response = await fetch(url);
-        const movie = await response.json();
+        const movie = await fetchMovie(movieId);
+        const credits = await fetchCredits(movieId);
 
-        container.innerHTML = '';
-        const card = createMovieCard(movie, options, smallOverview);
-        container.appendChild(card);
+        let posterUrl = './Assets/img/NoPreview.gif';
+        if (movie.poster_path && movie.poster_path !== 'null' && movie.poster_path !== null) {
+            posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+        }
+
+        let backdropUrl = './Assets/img/NoBackdrop.gif';
+        let backdropStyle = '';
+        if (movie.backdrop_path && movie.backdrop_path !== 'null' && movie.backdrop_path !== null) {
+            backdropUrl = `https://image.tmdb.org/t/p/original${movie.backdrop_path}`;
+            backdropStyle = 'filter: saturate(0) contrast(1.5) blur(2px);';
+        }
+
+        let castHTML = '';
+        if (credits && credits.cast && credits.cast.length > 0) {
+            const maxActors = 5;
+            const actorCount = credits.cast.length < maxActors ? credits.cast.length : maxActors;
+            
+            for (let i = 0; i < actorCount; i++) {
+                const actor = credits.cast[i];
+                castHTML += `
+                    <div class="actor">
+                        <p class="actor-name">${actor.name}</p>
+                        <span class="actor-role">${actor.character}</span>
+                    </div>
+                `;
+            }
+        }
+
+        let genresHTML = '';
+        if (movie.genres && movie.genres.length > 0) {
+            for (let i = 0; i < movie.genres.length; i++) {
+                genresHTML += `<span class="genre-tag">${movie.genres[i].name}</span>`;
+            }
+        }
+        
+        container.innerHTML = `
+            <div class="details-backdrop">
+                <img src="${backdropUrl}" alt="backdrop" style="${backdropStyle}">
+            </div>
+
+            <div class="details-content">
+                <div class="details-poster">
+                    <img src="${posterUrl}" alt="${movie.title}">
+                </div>
+
+                <div class="details-info">
+                    <h1 class="details-title">${movie.title}</h1>
+
+                    <div class="details-rating">
+                        <div class="rating-stars-container"></div>
+                        <span class="rating-number">${movie.vote_average.toFixed(1)}/10</span>
+                    </div>
+
+                    <div class="details-genres">
+                        ${genresHTML}
+                    </div>
+
+                    <p class="details-overview">${movie.overview}</p>
+
+                    <h3 class="section-title">Cast</h3>
+                    <div class="details-cast">
+                        ${castHTML}
+                    </div>
+
+                    <div class="details-metrics">
+                        <div class="metric">
+                            <span class="metric-label">Release Date</span>
+                            <p class="metric-value">${formatDate(movie.release_date)}</p>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Budget</span>
+                            <p class="metric-value">${formatMoney(movie.budget)}</p>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Revenue</span>
+                            <p class="metric-value">${formatMoney(movie.revenue)}</p>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Runtime</span>
+                            <p class="metric-value">${movie.runtime} min</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const ratingContainer = container.querySelector('.rating-stars-container');
+        if (ratingContainer) {
+            const starRating = createStarRating(movie);
+            ratingContainer.appendChild(starRating);
+        }
+
     } catch (error) {
-        container.innerHTML = '<p>Failed to load movie</p>';
-        console.error(error);
+        container.innerHTML = '<p class="error-message">Error loading movie</p>';
+        console.error('Error:', error);
     }
 }

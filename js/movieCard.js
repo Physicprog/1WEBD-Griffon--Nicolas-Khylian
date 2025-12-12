@@ -1,9 +1,9 @@
 import { sendNotification } from "./utils/notif.js";
-import { loadHistory } from './getMovie.js';
 import { saveMovie, removeMovie, getSavedMovies } from './utils/FavLocalStorage.js';
+import { API_KEY, BASE_URL } from './api.js';
 
 
-function movieToDico(movie) {
+export function movieToDico(movie) {
     if (!movie) return {};
     const dict = {};
     for (let i in movie) {
@@ -26,9 +26,9 @@ function movieToDico(movie) {
     return dict;
 }
 
-
 export function createFavoriteButton(movie) {
     const button = document.createElement('img');
+
     button.className = 'favorite-btn';
     button.alt = 'Favorite';
 
@@ -68,15 +68,12 @@ export function createFavoriteButton(movie) {
             button.src = './Assets/img/1.png';
             sendNotification(`"${movie.title}" added to favorites!`, true, 3000);
         }
-
-        loadHistory();
     });
 
     return button;
 }
 
-
-function createStarRating(movie) {
+export function createStarRating(movie) {
     const dict = movieToDico(movie);
     const rate = Math.round(parseFloat(dict.vote_average) / 2); 
     
@@ -113,22 +110,177 @@ function createStarRating(movie) {
     return container;
 }
 
+export function createLetterboxNote(movie) {
+    const dict = movieToDico(movie);
+    const p = document.createElement('p');
+    const popularity = Math.round(dict.popularity); 
+    p.textContent = popularity;
+    return p;
+}
 
-function createMovieImage(movie) {
+export function createDVDDate(movie) {
+    const dict = movieToDico(movie);
+    const dates = dict?.release_dates;
+
+    if (!dates || dates.length === 0) {
+        const d = "Not able to get the date";
+        return d;
+    }
+
+    const d = new Date(dates[0].release_date);
+    return d.toISOString().slice(0, 10);
+}
+
+export function formatDate(dateString) {
+    if (!dateString || typeof dateString !== 'string'){
+        console.log("invalid date format");
+     return ;
+     }
+
+    const parts = dateString.split('-');
+
+    if (parts.length !== 3) return dateString;
+
+    const [year, month, day] = parts;
+
+    return `${day}-${month}-${year}`;
+}
+
+export function createLanguageMovie(movie) {
+    const dict = movieToDico(movie);
+    const p = document.createElement('p');
+    const language = dict.original_language.toUpperCase(); 
+    p.textContent = language;
+    return p;
+}
+
+export function formatMoney(amount) {
+    const num = Number(amount);
+    if (num >= 1000000000)
+        {
+
+        return `${Math.round(num / 1000000000)} Billions $`;
+    } 
+    if (num >= 1000000) {
+         return `${Math.round(num / 1000000)} Millions $`;
+    }
+
+    return `${num.toLocaleString()}$`;
+}
+
+export function createCastSection(credits) {
+    const section = document.createElement('div');
+    section.className = 'cast-section';
+
+    if (!credits || !Array.isArray(credits.cast) || credits.cast.length === 0) {
+        return section;
+    }
+
+    const title = document.createElement('h3');
+    title.textContent = 'Main actors';
+    section.appendChild(title);
+
+    const list = document.createElement('div');
+    list.className = 'cast-list';
+
+    for (let i = 0; i < 5 && i < credits.cast.length; i++) {
+        list.appendChild(createActorCard(credits.cast[i]));
+    }
+
+    section.appendChild(list);
+    return section;
+}
+
+
+export function createActorCard(actor) {
+    const card = document.createElement('div');
+    card.className = 'actor-card';
+
+    const name = document.createElement('p');
+    name.className = 'actor-name';
+    name.textContent = actor.name
+    card.appendChild(name);
+
+    return card;
+}
+
+export function createMovieCost(movie) {
+    const dict = movieToDico(movie);
+    const p = document.createElement('p');
+    const cost = Math.round(dict.budget);
+    
+    if (!cost || cost === 0){
+        p.textContent = "Cost not available";
+        return p;
+    }
+
+    p.textContent = cost;
+    return p;
+}
+
+export async function fetchCredits(movieId) {
+
+    const url = `${BASE_URL}/movie/${movieId}/credits?api_key=${API_KEY}&language=en-EN`;
+    const response = await fetch(url);
+    if (!response.ok) {
+        console.log("credit error");
+        return;
+    }
+
+    return await response.json();
+}
+
+export function createMovieGain(movie) {
+    const dict = movieToDico(movie);
+    const p = document.createElement('p');
+    const gain = Math.round(dict.revenue); 
+    if (!cost || cost === 0){
+        p.textContent = "Gain not available";
+        return p;
+    }
+    p.textContent = gain;
+    return p;
+}
+
+export function createMovieProfit(movie) {
+    const dict = movieToDico(movie);
+    const p = document.createElement('p');
+    const profit = Math.round(dict.revenue - dict.budget);
+    if (!profit){
+        p.textContent = "Profit not available";
+        return p;
+    }
+    p.textContent = profit;
+    return p;
+}
+
+export function createMovieImage(movie) {
     const dict = movieToDico(movie);
     const img = document.createElement('img');
     const chemin = dict.poster_path;
     
-    if (chemin === 'null') {
+    if (!chemin || chemin === 'null' || chemin === null) {
         img.src = './Assets/img/NoPreview.gif';  
     } else {
         img.src = 'https://image.tmdb.org/t/p/w500/' + chemin;
     }
-    
+
     return img;
 }
+export function createBackdropImage(movie) {
+    const dict = movieToDico(movie);
+    const backdropImg = document.querySelector('.details-backdrop img');
+    const chemin = dict.backdrop_path;
 
-function createMovieTitle(movie) {
+    if (!chemin || chemin === 'null' || chemin === null) {
+        backdropImg.src = 'Assets/img/NoBackdrop.gif';
+    } else {
+        backdropImg.src = `https://image.tmdb.org/t/p/original${chemin}`;
+        backdropImg.style.filter = 'saturate(0) contrast(1.5) blur(2px)';
+    }
+}
+
+export function createMovieTitle(movie) {
     const dict = movieToDico(movie);
     const h5 = document.createElement('h5');
     const textMovie = dict.title;
@@ -152,8 +304,7 @@ function createMovieTitle(movie) {
     return h5;
 }
 
-
-function createMovieYear(movie) {
+export function createMovieYear(movie) {
     const dict = movieToDico(movie);
     const p = document.createElement('p');
     const date = dict.release_date;
@@ -168,18 +319,18 @@ function createMovieYear(movie) {
     return p;
 }
 
-function caption(movie, smallOverview = false) {
+export function caption(movie, smallOverview = false) {
     const dict = movieToDico(movie);
     const p = document.createElement('p');
     var text = dict.overview;
 
     if (!text || text === 'null') {
-        p.textContent = "Date not available";
+        p.textContent = "Description not available";
         return p;
     }
 
     if(smallOverview === true) {
-        const max = 35;
+        const max = 100;
         if (text.length > max) {
             text = text.slice(0, max) + "...";
         }
@@ -189,16 +340,32 @@ function caption(movie, smallOverview = false) {
     return p;
 }
 
+export function createMovieElement(movie,
+    options = ['title', 'rating', 'year', 'overview', 'poster', 'backdrop', 'letterbox', 'cost', 'gain', 'profit'],
+    smallOverview = true, cat = 'card', select = true) {
 
-export function createMovieCard(movie, options = ['title', 'rating', 'year', 'overview', 'image'], smallOverview = false) {
-    const card = document.createElement('div');
-    card.className = 'card';
-
+    const element = document.createElement('div');
     const container = document.createElement('div');
-    container.className = 'container';
+
+    if (cat === 'card') {
+        element.className = 'card'; 
+        container.className = 'container';
+    } else if (cat === 'details') {
+        element.className = 'movie-details-card'; 
+        container.className = 'movie-details-content';
+    } else {
+        console.error("Error: unknown category for movie element");
+        return element;
+    }
 
     options.forEach(option => {
         switch(option) {
+            case 'backdrop':
+                element.appendChild(createBackdropImage(movie));
+                break;
+            case 'poster':
+                container.appendChild(createMovieImage(movie));
+                break;
             case 'title':
                 container.appendChild(createMovieTitle(movie));
                 break;
@@ -211,21 +378,29 @@ export function createMovieCard(movie, options = ['title', 'rating', 'year', 'ov
             case 'overview':
                 container.appendChild(caption(movie, smallOverview));
                 break;
-            case 'image':
-                card.appendChild(createMovieImage(movie, false));
+            case 'letterbox':
+                container.appendChild(createLetterboxNote(movie));
                 break;
-            case 'poster':
-                card.appendChild(createMovieImage(movie));
+            case 'cost':
+                container.appendChild(createMovieCost(movie));
+                break;
+            case 'gain':
+                container.appendChild(createMovieGain(movie));
+                break;
+            case 'profit':
+                container.appendChild(createMovieProfit(movie));
                 break;
         }
     });
-    
-    card.appendChild(container);
-    
-    card.addEventListener('click', () => {
-        saveMovie(movie); 
-        window.location.href = "movie.html?id=" + movie.id;
-    });
-    
-    return card;
+
+    element.appendChild(container);
+
+    if (cat === 'card' && select) {
+        element.addEventListener('click', () => {
+            saveMovie(movie);
+            window.location.href = `movie.html?id=${movie.id}`;
+        });
+    }
+
+    return element;
 }

@@ -1,23 +1,43 @@
 export function saveMovie(movie, key = 'History') {
-    let saved = JSON.parse(localStorage.getItem(key)) || [];
+    let saved = localStorage.getItem(key);
     
-    for (let m of saved) {
-        if (m.id === movie.id) {
-            return false; 
+    if (!saved) {
+        saved = [];
+    } else {
+        saved = JSON.parse(saved);
+    }
+    
+    for (let i = 0; i < saved.length; i++) {
+        if (saved[i].id === movie.id) {
+            return false;
         }
     }
+    
     saved.push(movie);
     localStorage.setItem(key, JSON.stringify(saved));
     return true;
 }
 
 export function getSavedMovies(key = 'History') {
-    return JSON.parse(localStorage.getItem(key)) || [];
+    let saved = localStorage.getItem(key);
+    
+    if (!saved) {
+        return [];
+    }
+    
+    return JSON.parse(saved);
 }
 
-export function removeMovie(movieId, key = 'savedMovies') {
-    const saved = getSavedMovies(key);
-    const newList = saved.filter(m => m.id !== movieId);
+export function removeMovie(movieId, key = 'History') {
+    let saved = getSavedMovies(key);
+    let newList = [];
+    
+    for (let i = 0; i < saved.length; i++) {
+        if (saved[i].id !== movieId) {
+            newList.push(saved[i]);
+        }
+    }
+    
     localStorage.setItem(key, JSON.stringify(newList));
 }
 

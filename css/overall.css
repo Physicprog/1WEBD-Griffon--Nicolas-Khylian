@@ -8,6 +8,14 @@
     src: url('./../Assets/fonts/PWHappyChristmas.ttf');
 }
 
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
 body {
     font-family: 'Museosans', sans-serif;
     padding: 0;
@@ -36,22 +44,28 @@ html {
     scroll-behavior: smooth;
 }
 
-.card img {
+.card img,
+.movie-details-card .backdrop,
+.movie-details-content img.poster,
+.rate .star,
+.movie-details-content .favorite-btn,
+.favorite-btn {
     user-select: none;       
     -webkit-user-drag: none;  
     -moz-user-select: none; 
     -ms-user-select: none;  
 }
 
-
 #ErrorText {
+    display: none;
+    padding-top: 10%;
+    justify-content: center;
+    text-align: center;
+    color: var(--font-color);
+}
+
+
+#searchMovie {
     display: none;
 }
 
-
- #ErrorText {
-  padding-top: 10%;
-  justify-content: center;
-  text-align: center;
-  color: var(--font-color);
-}

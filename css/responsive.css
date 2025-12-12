@@ -44,6 +44,32 @@
   .container {
     padding: 10px;
   }
+  .details-content {
+      flex-direction: column;
+  }
+
+  .details-backdrop,
+  .details-poster {
+      height: 250px;
+  }
+
+  .details-poster {
+      width: 200px;
+      margin: 0 auto;
+
+  }
+
+  .details-title {
+      font-size: 28px;
+  }
+
+  .details-metrics {
+      flex-direction: column;
+  }
+
+  .metric {
+      min-width: 100%;
+  }
 }
 
 @media screen and (max-width: 480px) {
