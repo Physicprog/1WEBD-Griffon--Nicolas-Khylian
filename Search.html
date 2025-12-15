@@ -1,51 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Movie-lage - Search</title>
-  <link href="./css/styles.css" rel="stylesheet"/>
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
-</head>
-<body class="theme-light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie-lage - Search</title>
+    <link href="./css/styles.css" rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  </head>
+  <body class="theme-light">
+    <header class="navbar">
+      <a id="Logo" href="index.html">Movie-lage</a>
 
-  <header class="navbar">
-    <a id="Logo" href="index.html">Movie-lage</a>
+      <nav class="link">
+        <a id="DarkLightMode"></a>
+        <a id="search" href="Search.html">Search</a>
+        <a id="watchlist" href="favorite.html">Favorite</a>
+      </nav>
+    </header>
 
-    <nav class="link">
-      <a id="DarkLightMode"></a>
-      <a id="search" href="Search.html">Search</a>
-      <a id="watchlist" href="favorite.html">Watchlist</a>
-    </nav>
-  </header>
-
-  <div id="ErrorText">
-    <h1>Oups! Something went wrong.</h1>
-    <p>We couldn't load the data. Please try again later.</p>
-  </div>
-
-  <div id="noError">
-    <div id="site-search-container">
-      <input type="search" id="site-search-page" class="input" placeholder="Type your search..."/>
+    <div id="ErrorText">
+      <h1>Oups! Something went wrong.</h1>
+      <p>We couldn't load the data. Please try again later.</p>
     </div>
 
-    <div id="searchForMovie"></div>
-    <div id="NoSearchMovie"></div>
-  </div>
+    <div id="noError">
+      <div id="site-search-container">
+        <input
+          type="search"
+          id="site-search-page"
+          class="input"
+          placeholder="Type your search..."
+        />
+      </div>
 
-  <div id="notification">
-    <h1 id="theNotification"></h1>
-  </div>
+      <div id="searchForMovie"></div>
+      <div id="NoSearchMovie"></div>
+    </div>
 
-  <script type="module" src="./js/api.js"></script>
-  <script type="module" src="./js/utils/loader.js"></script>
-  <script type="module" src="./js/utils/theme.js"></script>
-  <script type="module" src="./js/main.js"></script>
+    <div id="notification">
+      <h1 id="theNotification"></h1>
+    </div>
 
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>
-    AOS.init(); 
-  </script>
+    <script type="module" src="./js/api.js"></script>
+    <script type="module" src="./js/utils/loader.js"></script>
+    <script type="module" src="./js/utils/theme.js"></script>
+    <script type="module" src="./js/main.js"></script>
 
-</body>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      AOS.init();
+    </script>
+  </body>
 </html>

@@ -1,8 +1,8 @@
 const themeToggle = document.getElementById("DarkLightMode");
-const light = 'theme-light';
-const dark = 'theme-dark';
+const light = "theme-light";
+const dark = "theme-dark";
 
-let currentTheme = localStorage.getItem('theme');
+let currentTheme = localStorage.getItem("theme");
 if (!currentTheme) {
   currentTheme = light;
 }
@@ -17,7 +17,7 @@ export function applyTheme(theme) {
       themeToggle.classList.remove(dark);
     }
   }
-  localStorage.setItem('theme', theme);
+  localStorage.setItem("theme", theme);
   currentTheme = theme;
 }
 
@@ -29,8 +29,7 @@ export function toggleTheme() {
   }
 }
 
-
 if (themeToggle) {
-  themeToggle.addEventListener('click', toggleTheme);
+  themeToggle.addEventListener("click", toggleTheme);
 }
 applyTheme(currentTheme);

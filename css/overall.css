@@ -1,28 +1,26 @@
 @font-face {
-    font-family: 'Museosans';
-    src: url('./../Assets/fonts/museosans.ttf');
+  font-family: "Museosans";
+  src: url("./../Assets/fonts/museosans.ttf");
 }
 
 @font-face {
-    font-family: 'PWHappyChristmas';
-    src: url('./../Assets/fonts/PWHappyChristmas.ttf');
+  font-family: "PWHappyChristmas";
+  src: url("./../Assets/fonts/PWHappyChristmas.ttf");
 }
-
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-
 body {
-    font-family: 'Museosans', sans-serif;
-    padding: 0;
-    margin: 0;
-    background-image: url('./../Assets/img/bgpattern.png');
-    background-repeat: repeat;
-    background-size: 30px;
+  font-family: "Museosans", sans-serif;
+  padding: 0;
+  margin: 0;
+  background-image: url("./../Assets/img/bgpattern.png");
+  background-repeat: repeat;
+  background-size: 30px;
 }
 
 button {
@@ -31,20 +29,18 @@ button {
 }
 
 body.theme-dark {
-    background-image: url('./../Assets/img/bgpattern.png');
-    background-repeat: repeat;
-    background-size: 30px;
+  background-image: url("./../Assets/img/bgpattern.png");
+  background-repeat: repeat;
+  background-size: 30px;
 }
 
 body.theme-light {
-    background-color: var(--color-surface);
-    background-image: none;
+  background-color: var(--color-surface);
+  background-image: none;
 }
 
-
-
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
 }
 
 .card img,
@@ -53,22 +49,20 @@ html {
 .rate .star,
 .movie-details-content .favorite-btn,
 .favorite-btn {
-    user-select: none;       
-    -webkit-user-drag: none;  
-    -moz-user-select: none; 
-    -ms-user-select: none;  
+  user-select: none;
+  -webkit-user-drag: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 #ErrorText {
-    display: none;
-    padding-top: 10%;
-    justify-content: center;
-    text-align: center;
-    color: var(--font-color);
+  display: none;
+  padding-top: 10%;
+  justify-content: center;
+  text-align: center;
+  color: var(--font-color);
 }
-
 
 #searchMovie {
-    display: none;
+  display: none;
 }
-

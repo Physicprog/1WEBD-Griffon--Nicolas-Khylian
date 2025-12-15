@@ -1,19 +1,19 @@
 .theme-light {
-  --color-primary: #003C8F;          
-  --color-secondary: #FFFFFF;        
-  --color-accent: #006B52;           
-  --font-color: #0A0A0A;             
-  --color-surface: #EAEAEA;          
-  --color-ui-accent: #d2d2d2;        
+  --color-primary: #003c8f;
+  --color-secondary: #ffffff;
+  --color-accent: #006b52;
+  --font-color: #0a0a0a;
+  --color-surface: #eaeaea;
+  --color-ui-accent: #d2d2d2;
   --border-color: rgba(0, 0, 0, 0.22);
 }
 
 .theme-dark {
-  --color-primary: #79CCFF;          
-  --color-secondary: #0A0A0A;        
-  --color-accent: #47D8A5;           
-  --font-color: #FAFAFA;             
-  --color-surface: #1A1A1A;          
-  --color-ui-accent: #1b1b1b;        
+  --color-primary: #79ccff;
+  --color-secondary: #0a0a0a;
+  --color-accent: #47d8a5;
+  --font-color: #fafafa;
+  --color-surface: #1a1a1a;
+  --color-ui-accent: #1b1b1b;
   --border-color: rgba(163, 163, 163, 0.22);
 }

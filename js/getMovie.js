@@ -1,76 +1,111 @@
-import { getTrendingMovies, getRandomMovies, fetchMovie, getMovieByName } from './api.js';
-import { createMovieElement, formatDate, formatMoney, fetchCredits, createStarRating, createBackdropImage, createMovieImage } from './movieCard.js';
-import { getSavedMovies, clearAllMovies } from './utils/FavLocalStorage.js';
-import { sendNotification } from './utils/notif.js';
+import {
+  getTrendingMovies,
+  getRandomMovies,
+  fetchMovie,
+  getMovieByName,
+} from "./api.js";
+import {
+  createMovieElement,
+  formatDate,
+  formatMoney,
+  fetchCredits,
+  createStarRating,
+  createBackdropImage,
+  createMovieImage,
+} from "./movieCard.js";
+import { getSavedMovies, clearAllMovies } from "./utils/FavLocalStorage.js";
+import { sendNotification } from "./utils/notif.js";
 
-export async function loadTendance(options = ['poster', 'title', 'rating', 'overview'], smallOverview = true) {
-    const container = document.querySelector('.movie-container');
-    if (!container) return;
-    container.innerHTML = ''; 
+export async function loadTendance(
+  options = ["poster", "title", "rating", "overview"],
+  smallOverview = true
+) {
+  const container = document.querySelector(".movie-container");
+  if (!container) return;
+  container.innerHTML = "";
 
-    const trendingMovies = await getTrendingMovies();
-    trendingMovies.forEach(movie => {
-        const card = createMovieElement(movie, options, smallOverview, 'card', true);
-        container.appendChild(card);
-    });
+  const trendingMovies = await getTrendingMovies();
+  trendingMovies.forEach((movie) => {
+    const card = createMovieElement(
+      movie,
+      options,
+      smallOverview,
+      "card",
+      true
+    );
+    container.appendChild(card);
+  });
 }
 
-export function loadRandomMovies(options = ['poster', 'title', 'rating', 'overview'], smallOverview = true) {
-    setTimeout(async () => {
-        const container = document.querySelector('.movie-random');
-        if (!container) return;
+export function loadRandomMovies(
+  options = ["poster", "title", "rating", "overview"],
+  smallOverview = true
+) {
+  setTimeout(async () => {
+    const container = document.querySelector(".movie-random");
+    if (!container) return;
 
-        try {
-            const randomMovies = await getRandomMovies();
-            randomMovies.forEach(movie => {
-                const card = createMovieElement(movie, options, smallOverview, 'card', true);
-                container.appendChild(card);
-            });
-        } catch (error) {
-            console.error('Error loading random movies:', error);
-        }
-    }, 2000);
+    try {
+      const randomMovies = await getRandomMovies();
+      randomMovies.forEach((movie) => {
+        const card = createMovieElement(
+          movie,
+          options,
+          smallOverview,
+          "card",
+          true
+        );
+        container.appendChild(card);
+      });
+    } catch (error) {
+      console.error("Error loading random movies:", error);
+    }
+  }, 2000);
 }
 
 var isLoading = false;
-window.addEventListener('scroll', async () => {
-    const position = window.innerHeight + window.scrollY;
-    const limite = document.body.offsetHeight;
+window.addEventListener("scroll", async () => {
+  const position = window.innerHeight + window.scrollY;
+  const limite = document.body.offsetHeight;
 
-    if (position >= limite - 100 && !isLoading) {
-        isLoading = true;
-        await loadRandomMovies();
-        isLoading = false;
-    }
+  if (position >= limite - 100 && !isLoading) {
+    isLoading = true;
+    await loadRandomMovies();
+    isLoading = false;
+  }
 });
 
 export function loadHistory() {
-    const container = document.querySelector('.movie-history');
-    if (!container) return;
+  const container = document.querySelector(".movie-history");
+  if (!container) return;
 
-    const saved = getSavedMovies();
-    container.innerHTML = '';
+  const saved = getSavedMovies();
+  container.innerHTML = "";
 
-    if (!saved.length) {
-        container.innerHTML = '<p>No movies saved yet</p>';
-        return;
-    }
+  if (!saved.length) {
+    container.innerHTML = "<p>No movies saved yet</p>";
+    return;
+  }
 
-    saved.forEach(movie => {
-        const card = createMovieElement(movie, ['poster', 'title', 'rating', 'overview'], false);
-        container.appendChild(card);
-    });
+  saved.forEach((movie) => {
+    const card = createMovieElement(
+      movie,
+      ["poster", "title", "rating", "overview"],
+      false
+    );
+    container.appendChild(card);
+  });
 }
 
 export function clearHistory() {
-    const saved = getSavedMovies(); 
-    if (saved.length) {
-        clearAllMovies();
-        loadHistory();
-        sendNotification('Favorites cleared!', true, 3000);
-    } else {
-        sendNotification('Already empty..', false, 3000);
-    }
+  const saved = getSavedMovies();
+  if (saved.length) {
+    clearAllMovies();
+    loadHistory();
+    sendNotification("Favorites cleared!", true, 3000);
+  } else {
+    sendNotification("Already empty..", false, 3000);
+  }
 }
 
 let searchInput = document.getElementById("site-search");
@@ -79,133 +114,155 @@ let SearchMovie = document.getElementById("searchForMovie");
 let NoSearchMovie = document.getElementById("NoSearchMovie");
 
 if (searchInput) {
-    searchInput.addEventListener('keyup', async () => {
-        const input = searchInput.value;
-        
-        if (input.trim() === '') {
-            SearchMovie.innerHTML = '';
-            SearchMovie.style.display = 'none';
-            if (NoSearchMovie) NoSearchMovie.style.display = 'block';
-            return;
-        }
+  searchInput.addEventListener("keyup", async () => {
+    const input = searchInput.value;
 
-        const results = await getMovieByName(input);
+    if (input.trim() === "") {
+      SearchMovie.innerHTML = "";
+      SearchMovie.style.display = "none";
+      if (NoSearchMovie) NoSearchMovie.style.display = "block";
+      return;
+    }
 
-        SearchMovie.innerHTML = '';
-        SearchMovie.className = 'card-search';
+    const results = await getMovieByName(input);
 
-        const title = document.createElement('h1');
-        title.textContent = 'Your movies search';
-        title.className = 'search-title';
-        SearchMovie.appendChild(title);
+    SearchMovie.innerHTML = "";
+    SearchMovie.className = "card-search";
 
-        if (results && results.length > 0) {
-            for (const movie of results) {
-                const movieCard = createMovieElement(movie, ['poster', 'title', 'rating', 'overview'], true, 'card', true);
-                SearchMovie.appendChild(movieCard);
-            }
-            SearchMovie.style.display = 'block';
-            if (NoSearchMovie) NoSearchMovie.style.display = 'none';
-        } else {
-            const noResult = document.createElement('p');
-            noResult.innerHTML = 'No movie found<br>Enter a correct movie name to start';
-            noResult.className = 'search-message';
-            SearchMovie.appendChild(noResult);
-            if (NoSearchMovie) NoSearchMovie.style.display = 'none';
-            SearchMovie.style.display = 'block';
-        }
-    });
+    const title = document.createElement("h1");
+    title.textContent = "Your movies search";
+    title.className = "search-title";
+    SearchMovie.appendChild(title);
+
+    if (results && results.length > 0) {
+      for (const movie of results) {
+        const movieCard = createMovieElement(
+          movie,
+          ["poster", "title", "rating", "overview"],
+          true,
+          "card",
+          true
+        );
+        SearchMovie.appendChild(movieCard);
+      }
+      SearchMovie.style.display = "block";
+      if (NoSearchMovie) NoSearchMovie.style.display = "none";
+    } else {
+      const noResult = document.createElement("p");
+      noResult.innerHTML =
+        "No movie found<br>Enter a correct movie name to start";
+      noResult.className = "search-message";
+      SearchMovie.appendChild(noResult);
+      if (NoSearchMovie) NoSearchMovie.style.display = "none";
+      SearchMovie.style.display = "block";
+    }
+  });
 }
 
 if (searchInputPage) {
-    searchInputPage.addEventListener('keyup', async () => {
-        const input = searchInputPage.value;
-        
-        if (input.trim() === '') {
-            SearchMovie.innerHTML = '';
-            SearchMovie.style.display = 'none';
-            if (NoSearchMovie) NoSearchMovie.style.display = 'block';
-            return;
-        }
+  searchInputPage.addEventListener("keyup", async () => {
+    const input = searchInputPage.value;
 
-        const results = await getMovieByName(input);
+    if (input.trim() === "") {
+      SearchMovie.innerHTML = "";
+      SearchMovie.style.display = "none";
+      if (NoSearchMovie) NoSearchMovie.style.display = "block";
+      return;
+    }
 
-        SearchMovie.innerHTML = '';
-        SearchMovie.className = 'card-search';
+    const results = await getMovieByName(input);
 
-        const title = document.createElement('h1');
-        title.textContent = 'Your movies search';
-        title.className = 'search-title';
-        SearchMovie.appendChild(title);
+    SearchMovie.innerHTML = "";
+    SearchMovie.className = "card-search";
 
-        if (results && results.length > 0) {
-            for (const movie of results) {
-                const movieCard = createMovieElement(movie, ['poster', 'title', 'rating', 'overview'], true, 'card', true);
-                SearchMovie.appendChild(movieCard);
-            }
-            SearchMovie.style.display = 'block';
-            if (NoSearchMovie) NoSearchMovie.style.display = 'none';
-        } else {
-            const noResult = document.createElement('p');
-            noResult.innerHTML = 'No movie found<br>Enter a correct movie name to start';
-            noResult.className = 'search-message';
-            SearchMovie.appendChild(noResult);
-            if (NoSearchMovie) NoSearchMovie.style.display = 'none';
-            SearchMovie.style.display = 'block';
-        }
-    });
+    const title = document.createElement("h1");
+    title.textContent = "Your movies search";
+    title.className = "search-title";
+    SearchMovie.appendChild(title);
+
+    if (results && results.length > 0) {
+      for (const movie of results) {
+        const movieCard = createMovieElement(
+          movie,
+          ["poster", "title", "rating", "overview"],
+          true,
+          "card",
+          true
+        );
+        SearchMovie.appendChild(movieCard);
+      }
+      SearchMovie.style.display = "block";
+      if (NoSearchMovie) NoSearchMovie.style.display = "none";
+    } else {
+      const noResult = document.createElement("p");
+      noResult.innerHTML =
+        "No movie found<br>Enter a correct movie name to start";
+      noResult.className = "search-message";
+      SearchMovie.appendChild(noResult);
+      if (NoSearchMovie) NoSearchMovie.style.display = "none";
+      SearchMovie.style.display = "block";
+    }
+  });
 }
 
 export async function loadMovieDetails() {
-    const container = document.getElementById('movieDetailsCard');
-    if (!container) return;
+  const container = document.getElementById("movieDetailsCard");
+  if (!container) return;
 
-    const selectedMovieData = localStorage.getItem('selectedMovie');
-    
-    if (!selectedMovieData) {
-        container.innerHTML = '<p>No movie selected</p>';
-        return;
+  const selectedMovieData = localStorage.getItem("selectedMovie");
+
+  if (!selectedMovieData) {
+    container.innerHTML = "<p>No movie selected</p>";
+    return;
+  }
+
+  try {
+    const movie = JSON.parse(selectedMovieData);
+    const credits = await fetchCredits(movie.id);
+
+    let posterUrl = "./Assets/img/NoPreview.gif";
+    if (
+      movie.poster_path &&
+      movie.poster_path !== "null" &&
+      movie.poster_path !== null
+    ) {
+      posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
     }
 
-    try {
-        const movie = JSON.parse(selectedMovieData);
-        const credits = await fetchCredits(movie.id);
+    let backdropUrl = "./Assets/img/NoBackdrop.gif";
+    if (
+      movie.backdrop_path &&
+      movie.backdrop_path !== "null" &&
+      movie.backdrop_path !== null
+    ) {
+      backdropUrl = `https://image.tmdb.org/t/p/original${movie.backdrop_path}`;
+    }
 
-        let posterUrl = './Assets/img/NoPreview.gif';
-        if (movie.poster_path && movie.poster_path !== 'null' && movie.poster_path !== null) {
-            posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-        }
+    let castHTML = "";
+    if (credits && credits.cast && credits.cast.length > 0) {
+      const maxActors = 5;
+      const actorCount =
+        credits.cast.length < maxActors ? credits.cast.length : maxActors;
 
-        let backdropUrl = './Assets/img/NoBackdrop.gif';
-        if (movie.backdrop_path && movie.backdrop_path !== 'null' && movie.backdrop_path !== null) {
-            backdropUrl = `https://image.tmdb.org/t/p/original${movie.backdrop_path}`;
-            
-        }
-
-        let castHTML = '';
-        if (credits && credits.cast && credits.cast.length > 0) {
-            const maxActors = 5;
-            const actorCount = credits.cast.length < maxActors ? credits.cast.length : maxActors;
-            
-            for (let i = 0; i < actorCount; i++) {
-                const actor = credits.cast[i];
-                castHTML += `
+      for (let i = 0; i < actorCount; i++) {
+        const actor = credits.cast[i];
+        castHTML += `
                     <div class="actor">
                         <p class="actor-name">${actor.name}</p>
                         <span class="actor-role">${actor.character}</span>
                     </div>
                 `;
-            }
-        }
+      }
+    }
 
-        let genresHTML = '';
-        if (movie.genres && movie.genres.length > 0) {
-            for (let i = 0; i < movie.genres.length; i++) {
-                genresHTML += `<span class="genre-tag">${movie.genres[i].name}</span>`;
-            }
-        }
-        
-        container.innerHTML = `
+    let genresHTML = "";
+    if (movie.genres && movie.genres.length > 0) {
+      for (let i = 0; i < movie.genres.length; i++) {
+        genresHTML += `<span class="genre-tag">${movie.genres[i].name}</span>`;
+      }
+    }
+
+    container.innerHTML = `
             <div class="details-backdrop">
                 <img src="${backdropUrl}" alt="backdrop">
             </div>
@@ -220,7 +277,9 @@ export async function loadMovieDetails() {
 
                     <div class="details-rating">
                         <div class="rating-stars-container"></div>
-                        <span class="rating-number">${movie.vote_average.toFixed(1)}/10</span>
+                        <span class="rating-number">${movie.vote_average.toFixed(
+                          1
+                        )}/10</span>
                     </div>
 
                     <div class="details-genres">
@@ -237,15 +296,21 @@ export async function loadMovieDetails() {
                     <div class="details-metrics">
                         <div class="metric">
                             <span class="metric-label">Release Date</span>
-                            <p class="metric-value">${formatDate(movie.release_date)}</p>
+                            <p class="metric-value">${formatDate(
+                              movie.release_date
+                            )}</p>
                         </div>
                         <div class="metric">
                             <span class="metric-label">Budget</span>
-                            <p class="metric-value">${formatMoney(movie.budget)}</p>
+                            <p class="metric-value">${formatMoney(
+                              movie.budget
+                            )}</p>
                         </div>
                         <div class="metric">
                             <span class="metric-label">Revenue</span>
-                            <p class="metric-value">${formatMoney(movie.revenue)}</p>
+                            <p class="metric-value">${formatMoney(
+                              movie.revenue
+                            )}</p>
                         </div>
                         <div class="metric">
                             <span class="metric-label">Runtime</span>
@@ -256,14 +321,13 @@ export async function loadMovieDetails() {
             </div>
         `;
 
-        const ratingContainer = container.querySelector('.rating-stars-container');
-        if (ratingContainer) {
-            const starRating = createStarRating(movie);
-            ratingContainer.appendChild(starRating);
-        }
-
-    } catch (error) {
-        container.innerHTML = '<p class="error-message">Error loading movie</p>';
-        console.error('Error:', error);
+    const ratingContainer = container.querySelector(".rating-stars-container");
+    if (ratingContainer) {
+      const starRating = createStarRating(movie);
+      ratingContainer.appendChild(starRating);
     }
+  } catch (error) {
+    container.innerHTML = '<p class="error-message">Error loading movie</p>';
+    //console.error("Error:", error);
+  }
 }
