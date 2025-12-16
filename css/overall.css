@@ -66,3 +66,16 @@ html {
 #searchMovie {
   display: none;
 }
+
+.search-title {
+  margin-top: 8vh;
+  color: var(--font-color);
+}
+
+.search-message {
+  display: flex;
+  font-size: 25px;
+  margin-top: 5vh;
+  text-align: center;
+  color: var(--font-color);
+}

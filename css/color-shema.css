@@ -1,21 +1,21 @@
 .theme-light {
-  --color-primary: #003c8f;
+  --color-primary: #4c3fb8;
   --color-secondary: #ffffff;
-  --color-accent: #006b52;
-  --font-color: #0a0a0a;
-  --color-surface: #eaeaea;
-  --color-ui-accent: #d2d2d2;
-  --color-grey-light: #5b5b5b;
-  --border-color: rgba(0, 0, 0, 0.22);
+  --color-accent: #0d8f68;
+  --font-color: #1f2937;
+  --color-surface: #f3f4f6;
+  --color-ui-accent: #e5e7eb;
+  --color-grey-light: #6b7280;
+  --border-color: rgba(0, 0, 0, 0.1);
 }
 
 .theme-dark {
-  --color-primary: #79ccff;
-  --color-secondary: #0a0a0a;
-  --color-accent: #47d8a5;
-  --font-color: #fafafa;
-  --color-surface: #1a1a1a;
-  --color-ui-accent: #1b1b1b;
-  --color-grey-light: #bbbaba;
-  --border-color: rgba(163, 163, 163, 0.22);
+  --color-primary: #6b5dd4;
+  --color-secondary: #111827;
+  --color-accent: #2ab589;
+  --font-color: #f9fafb;
+  --color-surface: #1f2937;
+  --color-ui-accent: #374151;
+  --color-grey-light: #d1d5db;
+  --border-color: rgba(255, 255, 255, 0.1);
 }

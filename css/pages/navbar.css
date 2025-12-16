@@ -95,16 +95,30 @@
   padding: 6px 10px;
   outline: none;
 }
+
 #site-search:focus {
   opacity: 0.95;
+}
+
+
+.sr-only {
+  display: none;
 }
 
 #site-search-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  gap: 10px;
+
   padding-top: 50px;
   height: 50vh;
+}
+
+#site-search-container h1 {
+  color: var(--font-color);
+  font-size: 36px;
 }
 
 #site-search-page {
@@ -119,6 +133,17 @@
   box-shadow: 2px 3px 0 #000;
   outline: none;
   transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.input:hover {
+  border-color: #333;
+  box-shadow: 3px 4px 0 #000;
+}
+
+.input:active,
+.input:focus {
+  border-color: #555;
+  box-shadow: 1px 2px 0 #000;
 }
 
 .theme-dark .input {
@@ -141,5 +166,4 @@
 
 .input::placeholder {
   font-family: Museosans;
-  text-align: center;
 }

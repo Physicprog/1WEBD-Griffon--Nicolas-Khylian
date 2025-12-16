@@ -4,7 +4,6 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  width: 100%;
   height: 100vh;
   margin-top: 0;
 }
@@ -21,72 +20,79 @@
 .hero-text h1 {
   font-size: 3rem;
   margin-bottom: 10px;
+  text-shadow: 2px 2px 4px #000;
 }
 
 .hero-text p {
   font-size: 1.2rem;
   margin-bottom: 20px;
+  text-shadow: 2px 2px 4px #000;
 }
 
-.heroPage {
-  margin: 0;
-  padding: 0;
-  margin-bottom: -100px;
-}
 
-.heroPage a {
+.heroPage #btn {
+  text-align: center;
   text-decoration: none;
   margin: 8px;
   padding: 10px 20px;
   border: 3px solid #000;
-  text-align: left;
-  font-size: 16px;
+  font-size: 25px;
   font-weight: bold;
   color: #fff;
   text-shadow: 2px 2px #000;
-  background: #5a9fd4;
-  box-shadow: 6px 5px 15px #2a5f84;
+  background: #4131ab;
+  box-shadow: 6px 5px 20px rgba(76, 63, 184, 0.5);
   transition: transform 0.05s cubic-bezier(0.63, 0, 0.33, 0.99);
 }
 
 .heroPage a#btn-sec {
+  text-align: center;
   text-decoration: none;
   margin: 8px;
   padding: 10px 20px;
   border: 3px solid #000;
-  text-align: left;
-  font-size: 16px;
+  font-size: 25px;
   font-weight: bold;
   color: #fff;
   text-shadow: 2px 2px #000;
-  background: #d32c85;
-  box-shadow: 6px 5px 15px #d32c85;
+  background: #d93654;
+  box-shadow: 6px 5px 20px rgba(217, 54, 84, 0.5);
   transition: transform 0.05s cubic-bezier(0.63, 0, 0.33, 0.99);
 }
 
 .heroPage a:hover {
-  background: #6ab5ea;
-  box-shadow: 6px 5px 15px #2a5f84;
+  background: #3d2f99;
+  box-shadow: 6px 5px 25px rgba(61, 47, 153, 0.7);
+  transform: translateY(-2px);
+}
+
+.btn-hero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 
 .heroPage a#btn-sec:hover {
-  background: #ff44a8;
-  box-shadow: 6px 5px 15px #d7378c;
+  background: #b82d45;
+  box-shadow: 6px 5px 25px rgba(184, 45, 69, 0.7);
+  transform: translateY(-2px);
 }
 
 .heroPage a:active {
   transition: transform 10ms;
-  transform: scale(0.9);
-  background: #4a8fc4;
-  box-shadow: 6px 5px 15px #2a5f84;
-  filter: brightness(0.9);
+  transform: scale(0.95);
+  background: #332880;
+  box-shadow: 6px 5px 15px rgba(51, 40, 128, 0.4);
+  filter: brightness(0.85);
 }
-.heroPage a#btn-sec :active {
+
+.heroPage a#btn-sec:active {
   transition: transform 10ms;
-  transform: scale(0.9);
-  background: #d32c85;
-  box-shadow: 6px 5px 15px #ad256d;
-  filter: brightness(0.9);
+  transform: scale(0.95);
+  background: #a02538;
+  box-shadow: 6px 5px 15px rgba(160, 37, 56, 0.4);
+  filter: brightness(0.85);
 }
 
 .search-hero {

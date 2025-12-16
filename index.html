@@ -15,14 +15,12 @@
     <header class="navbar">
       <a id="Logo" href="#">Movie-lage</a>
 
-      <div class="search-bar">
-        <input
-          type="search"
-          id="site-search"
-          class="input"
-          placeholder="Type your search..."
-        />
-      </div>
+      <form>
+        <div class="search-bar">
+        <label for="site-search" class="sr-only">Search the site</label>
+          <input type="search" id="site-search" class="input" placeholder="Type your search..." />
+        </div>
+      </form>
 
       <nav class="link">
         <a id="DarkLightMode"></a>
@@ -47,8 +45,10 @@
               <p>Explore. Watch. Enjoy.</p>
 
               <div class="search-hero"></div>
-              <a href="#gallerie">Explore Films</a>
-              <a href="./Search.html" id="btn-sec">Search a movie</a>
+              <div class="btn-hero">
+                <a href="#gallerie" id="btn">Explore Films</a>
+                <a href="./Search.html" id="btn-sec">Search a movie</a>
+              </div>
             </div>
           </div>
         </section>
@@ -58,12 +58,7 @@
           <div class="movie-container"></div>
         </section>
 
-        <section
-          id="gallerie"
-          class="otherMovie"
-          data-aos="fade-up"
-          data-aos-duration="3000"
-        >
+        <section id="gallerie" class="otherMovie" data-aos="fade-up" data-aos-duration="3000">
           <h1>Other Movies</h1>
           <div class="movie-random"></div>
           <div class="loader"><h4>Loading...</h4></div>

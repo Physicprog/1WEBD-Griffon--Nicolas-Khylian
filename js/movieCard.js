@@ -1,43 +1,56 @@
 import { sendNotification } from "./utils/notif.js";
-import {
-  saveMovie,
-  getSavedMovies,
-  removeMovie,
-} from "./utils/FavLocalStorage.js";
+import { saveMovie, getSavedMovies, removeMovie } from "./utils/FavLocalStorage.js";
 import { API_KEY, BASE_URL } from "./api.js";
 
+
 export function movieToDico(movie) {
-  if (!movie) return {};
+  // Convertit l'objet movie venant de l'API en dictionnaire
   const dict = {};
-  for (let i in movie) {
-    let value = movie[i];
+  if (!movie) return {};
+
+  for (const key in movie) {
+    let value = movie[key];
     switch (true) {
+
       case value === null:
         value = "null";
         break;
-      case typeof value === "boolean":
+      case value === true || value === false:
         value = value ? "true" : "false";
         break;
-      case typeof value === "object":
+
+      case value && value.constructor === Object:
         value = "object";
         break;
+
       default:
         value = String(value);
     }
-    dict[i] = value;
+    dict[key] = value;
   }
   return dict;
 }
 
 export function createRuntime(movie) {
   const dict = movieToDico(movie);
-  const p = document.createElement("p");
   const runtime = parseInt(dict.runtime);
-  if (!runtime || runtime === 0) {
-    p.textContent = "Runtime not available";
-    return p;
+
+  if (!runtime || runtime === "null" || runtime === "0") {
+    return "Not available";
   }
-  return (p.textContent = `${runtime} min`);
+  const runtimeInMinutes = parseInt(runtime);
+
+  if (isNaN(runtimeInMinutes) || runtimeInMinutes === 0) {
+    return "Not available";
+  }
+
+  if (runtimeInMinutes >= 60) {
+    const h = Math.floor(runtimeInMinutes / 60);
+    const m = runtimeInMinutes % 60;
+    return m > 0 ? `${h}h ${m}min` : `${h}h`;
+  }
+
+  return `${runtimeInMinutes}min`;
 }
 
 export function createFavoriteButton(movie) {
@@ -87,6 +100,14 @@ export function createFavoriteButton(movie) {
   return button;
 }
 
+export function createNoteLetterbox(movie) {
+  const dict = movieToDico(movie);
+  const p = document.createElement("p");
+  const popularity = Math.round(dict.popularity);
+  p.textContent = popularity;
+  return p;
+}
+
 export function createStarRating(movie) {
   const dict = movieToDico(movie);
   const rate = Math.round(parseFloat(dict.vote_average) / 2);
@@ -111,8 +132,10 @@ export function createStarRating(movie) {
 
     if (i <= rate) {
       star.src = "./Assets/img/fav.png";
+      star.setAttribute("alt", "Rating images");
     } else {
       star.src = "./Assets/img/nofav.png";
+      star.setAttribute("alt", "No rating images");
     }
 
     star.className = "star";
@@ -134,7 +157,10 @@ export function createLetterboxNote(movie) {
 
 export function createDVDDate(movie) {
   const dict = movieToDico(movie);
-  const dates = dict?.release_dates;
+  let dates;
+  if (dict) {
+    dates = dict.release_dates;
+  }
 
   if (!dates || dates.length === 0) {
     const d = "Not able to get the date";
@@ -142,42 +168,59 @@ export function createDVDDate(movie) {
   }
 
   const d = new Date(dates[0].release_date);
-  return d.toISOString().slice(0, 10);
+  return d.toISOString().slice(0, 10); //convertit en date AAAA-MM-JJ
+}
+
+export function OriginalLanguage(movie) {
+  let lang;
+  const dico = movieToDico(movie);
+  if (dico) {
+    lang = dico.original_language;
+  }
+  const p = document.createElement("p");
+
+  const languageNames = {
+    en: "English",
+    fr: "French",
+    es: "Spanish",
+    de: "German",
+    it: "Italian",
+    ja: "Japanese",
+    ko: "Korean",
+    zh: "Chinese",
+    pt: "Portuguese",
+    ru: "Russian",
+    ar: "Arabic",
+    hi: "Hindi",
+    nl: "Dutch",
+    sv: "Swedish",
+    no: "Norwegian",
+    da: "Danish",
+    pl: "Polish"
+  };
+
+  if (!lang || lang === "null") {
+    p.textContent = "Language not available";
+  } else if (languageNames[lang]) {
+    p.textContent = languageNames[lang];
+  } else {
+    p.textContent = lang;
+  }
+
+  return p;
 }
 
 export function formatDate(dateString) {
   if (!dateString || typeof dateString !== "string") {
-    console.log("invalid date format");
     return;
   }
-
   const parts = dateString.split("-");
 
-  if (parts.length !== 3) return dateString;
-
+  if (parts.length !== 3) {
+    return dateString;
+  }
   const [year, month, day] = parts;
-
   return `${day}-${month}-${year}`;
-}
-
-export function createLanguageMovie(movie) {
-  const dict = movieToDico(movie);
-  const p = document.createElement("p");
-  const language = dict.original_language.toUpperCase();
-  p.textContent = language;
-  return p;
-}
-
-export function formatMoney(amount) {
-  const num = Number(amount);
-  if (num >= 1000000000) {
-    return `${Math.round(num / 1000000000)} Billions $`;
-  }
-  if (num >= 1000000) {
-    return `${Math.round(num / 1000000)} Millions $`;
-  }
-
-  return `${num.toLocaleString()}$`;
 }
 
 export function createCastSection(credits) {
@@ -215,17 +258,29 @@ export function createActorCard(actor) {
   return card;
 }
 
+export function formatMoney(amount) {
+  const num = Number(amount);
+  if (num >= 1000000000) {
+    return `${Math.round(num / 1000000000)} Billions $`;
+  }
+  if (num >= 1000000) {
+    return `${Math.round(num / 1000000)} Millions $`;
+  }
+
+  return `${num}$`;
+}
+
 export function createMovieCost(movie) {
   const dict = movieToDico(movie);
   const p = document.createElement("p");
   const cost = Math.round(dict.budget);
 
-  if (!cost || cost === 0) {
+  if (cost == null || isNaN(cost) || cost === 0) {
     p.textContent = "Cost not available";
     return p;
   }
 
-  p.textContent = cost;
+  p.textContent = formatMoney(cost);
   return p;
 }
 
@@ -233,11 +288,11 @@ export async function fetchCredits(movieId) {
   const url = `${BASE_URL}/movie/${movieId}/credits?api_key=${API_KEY}&language=en-EN`;
   const response = await fetch(url);
   if (!response.ok) {
-    console.log("credit error");
     return;
   }
 
   return await response.json();
+
 }
 
 export function createMovieGain(movie) {
@@ -272,8 +327,10 @@ export function createMovieImage(movie) {
   if (!chemin || chemin === "null" || chemin === null) {
     img.src = "./Assets/img/NoPreview.gif";
     img.classList.add("no-preview");
+    img.setAttribute("alt", "No Movie Poster");
   } else {
     img.src = "https://image.tmdb.org/t/p/w500/" + chemin;
+    img.setAttribute("alt", "Movie Poster");
   }
 
   return img;
@@ -286,13 +343,14 @@ export function createBackdropImage(movie) {
 
   if (!chemin || chemin === "null" || chemin === null) {
     backdropImg.src = "Assets/img/NoBackdrop.gif";
+    backdropImg.style.minHeight = "100vh";
   } else {
     backdropImg.src = `https://image.tmdb.org/t/p/original${chemin}`;
     backdropImg.style.filter = "saturate(0) contrast(1.5) blur(2px)";
   }
 }
 
-export function createMovieTitle(movie) {
+export function createMovieTitle(movie, cat = "card") {
   const dict = movieToDico(movie);
   const h5 = document.createElement("h5");
   const textMovie = dict.title;
@@ -304,13 +362,16 @@ export function createMovieTitle(movie) {
 
   const max = 18;
   let finalTitle = textMovie;
-  if (textMovie.length > max) {
-    finalTitle = textMovie.slice(0, max) + "...";
-    h5.addEventListener("click", function (event) {
-      event.stopPropagation();
-      sendNotification(`Movie Title: ${textMovie}`, true, 4500);
-    });
-  }
+  if (cat === "details") {
+    finalTitle = textMovie;
+  } else
+    if (textMovie.length > max) {
+      finalTitle = textMovie.slice(0, max) + "...";
+      h5.addEventListener("click", function (event) {
+        event.stopPropagation();
+        sendNotification(`Movie Title: ${textMovie}`, true, 4500);
+      });
+    }
 
   h5.textContent = finalTitle;
   return h5;
@@ -352,24 +413,7 @@ export function caption(movie, smallOverview = false) {
   return p;
 }
 
-export function createMovieElement(
-  movie,
-  options = [
-    "title",
-    "rating",
-    "year",
-    "overview",
-    "poster",
-    "backdrop",
-    "letterbox",
-    "cost",
-    "gain",
-    "profit",
-  ],
-  smallOverview = true,
-  cat = "card",
-  select = true
-) {
+export function createMovieElement(movie, options = ["title", "rating", "year", "overview", "poster", "backdrop", "letterbox", "cost", "gain", "profit",], smallOverview = true, cat = "card", select = true) {
   const element = document.createElement("div");
   const container = document.createElement("div");
 

@@ -21,6 +21,7 @@ body {
   object-fit: cover;
   z-index: 0;
   margin-bottom: 0;
+  top: -250px;
 }
 
 .details-content {

@@ -1,48 +1,37 @@
-import {
-  getTrendingMovies,
-  getRandomMovies,
-  getMovieByName,
-  API_KEY,
-  BASE_URL,
-} from "./api.js";
+import { getTrendingMovies, getRandomMovies, getMovieByName, API_KEY, BASE_URL } from "./api.js";
 
-import {
-  createMovieElement,
-  formatDate,
-  formatMoney,
-  fetchCredits,
-  createStarRating,
-  createBackdropImage,
-  createMovieImage,
-} from "./movieCard.js";
+import { OriginalLanguage, createMovieElement, formatDate, formatMoney, fetchCredits, createStarRating, createRuntime, createMovieTitle, createLetterboxNote, caption } from "./movieCard.js";
+
 import { getSavedMovies, clearAllMovies } from "./utils/FavLocalStorage.js";
 import { sendNotification } from "./utils/notif.js";
 
+async function fetchMovieDetails(movieId) {
+  const url = `${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&language=en-EN`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    console.error("Failed to fetch movie details");
+    return null;
+  }
+  return await response.json();
+}
+
+
+
 export async function loadTendance(
-  options = ["poster", "title", "rating", "overview"],
-  smallOverview = true
-) {
+  options = ["poster", "title", "rating", "overview"], smallOverview = true) {
   const container = document.querySelector(".movie-container");
   if (!container) return;
   container.innerHTML = "";
 
   const trendingMovies = await getTrendingMovies();
   trendingMovies.forEach((movie) => {
-    const card = createMovieElement(
-      movie,
-      options,
-      smallOverview,
-      "card",
-      true
-    );
+    const card = createMovieElement(movie, options, smallOverview, "card", true);
     container.appendChild(card);
   });
 }
 
 export function loadRandomMovies(
-  options = ["poster", "title", "rating", "overview"],
-  smallOverview = true
-) {
+  options = ["poster", "title", "rating", "overview"], smallOverview = true) {
   setTimeout(async () => {
     const container = document.querySelector(".movie-random");
     if (!container) return;
@@ -50,13 +39,7 @@ export function loadRandomMovies(
     try {
       const randomMovies = await getRandomMovies();
       randomMovies.forEach((movie) => {
-        const card = createMovieElement(
-          movie,
-          options,
-          smallOverview,
-          "card",
-          true
-        );
+        const card = createMovieElement(movie, options, smallOverview, "card", true);
         container.appendChild(card);
       });
     } catch (error) {
@@ -70,7 +53,7 @@ window.addEventListener("scroll", async () => {
   const position = window.innerHeight + window.scrollY;
   const limite = document.body.offsetHeight;
 
-  if (position >= limite - 100 && !isLoading) {
+  if (position >= limite - 100 && !isLoading) { //Si la position est proche du bas de la page et qu'on n'est pas déjà en train de charger, on rappelle la fonction pour charger des films
     isLoading = true;
     await loadRandomMovies();
     isLoading = false;
@@ -79,7 +62,10 @@ window.addEventListener("scroll", async () => {
 
 export function loadHistory() {
   const container = document.querySelector(".movie-history");
-  if (!container) return;
+  if (!container) {
+    return;
+  }
+
 
   const saved = getSavedMovies();
   container.innerHTML = "";
@@ -90,11 +76,7 @@ export function loadHistory() {
   }
 
   saved.forEach((movie) => {
-    const card = createMovieElement(
-      movie,
-      ["poster", "title", "rating", "overview"],
-      false
-    );
+    const card = createMovieElement(movie, ["poster", "title", "rating", "overview"], false);
     container.appendChild(card);
   });
 }
@@ -138,21 +120,14 @@ if (searchInput) {
 
     if (results && results.length > 0) {
       for (const movie of results) {
-        const movieCard = createMovieElement(
-          movie,
-          ["poster", "title", "rating", "overview"],
-          true,
-          "card",
-          true
-        );
+        const movieCard = createMovieElement(movie, ["poster", "title", "rating", "overview"], true, "card", true);
         SearchMovie.appendChild(movieCard);
       }
       SearchMovie.style.display = "block";
       if (NoSearchMovie) NoSearchMovie.style.display = "none";
     } else {
       const noResult = document.createElement("p");
-      noResult.innerHTML =
-        "No movie found<br>Enter a correct movie name to start";
+      noResult.innerHTML = "No movie found<br>Enter a correct movie name to start";
       noResult.className = "search-message";
       SearchMovie.appendChild(noResult);
       if (NoSearchMovie) NoSearchMovie.style.display = "none";
@@ -165,7 +140,7 @@ if (searchInputPage) {
   searchInputPage.addEventListener("keyup", async () => {
     const input = searchInputPage.value;
 
-    if (input.trim() === "") {
+    if (input.trim() === "") { //le trim pour retirer les espaces inutiles
       SearchMovie.innerHTML = "";
       SearchMovie.style.display = "none";
       if (NoSearchMovie) NoSearchMovie.style.display = "block";
@@ -179,43 +154,30 @@ if (searchInputPage) {
 
     const title = document.createElement("h1");
     title.textContent = "Your movies search";
-    title.className = "search-title";
+    title.className = "search-title-page";
     SearchMovie.appendChild(title);
 
     if (results && results.length > 0) {
       for (const movie of results) {
-        const movieCard = createMovieElement(
-          movie,
-          ["poster", "title", "rating", "overview"],
-          true,
-          "card",
-          true
-        );
+        const movieCard = createMovieElement(movie, ["poster", "title", "rating", "overview"], true, "card", true);
         SearchMovie.appendChild(movieCard);
       }
       SearchMovie.style.display = "block";
       if (NoSearchMovie) NoSearchMovie.style.display = "none";
     } else {
       const noResult = document.createElement("p");
-      noResult.innerHTML =
-        "No movie found<br>Enter a correct movie name to start";
-      noResult.className = "search-message";
+      noResult.innerHTML = "No movie found<br>Enter a correct movie name to start";
+      noResult.className = "search-message-page";
       SearchMovie.appendChild(noResult);
-      if (NoSearchMovie) NoSearchMovie.style.display = "none";
+      if (NoSearchMovie) {
+        NoSearchMovie.style.display = "none";
+      }
       SearchMovie.style.display = "block";
     }
   });
 }
 
-async function fetchMovieDetails(movieId) {
-  const url = `${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&language=en-EN`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    console.error("Failed to fetch movie details");
-    return null;
-  }
-  return await response.json();
-}
+
 
 export async function loadMovieDetails() {
   const container = document.getElementById("movieDetailsCard");
@@ -230,32 +192,31 @@ export async function loadMovieDetails() {
 
   try {
     const movieFromStorage = JSON.parse(selectedMovieData);
-
     const movie = await fetchMovieDetails(movieFromStorage.id);
 
     if (!movie) {
-      container.innerHTML =
-        '<p class="error-message">Error loading movie details</p>';
+      container.innerHTML = '<p class="error-message">Error loading movie details</p>';
       return;
     }
 
     const credits = await fetchCredits(movie.id);
+    const runtime = createRuntime(movie);
+    const formattedBudget = formatMoney(movie.budget || 0);
+    const formattedRevenue = formatMoney(movie.revenue || 0);
+    const title = createMovieTitle(movie, "details").textContent;
+    const Letterbox = createLetterboxNote(movie).textContent;
+    const overview = caption(movie).textContent;
+    const release_date = movie.release_date;
+    const language = OriginalLanguage(movie).textContent;
+
 
     let posterUrl = "./Assets/img/NoPreview.gif";
-    if (
-      movie.poster_path &&
-      movie.poster_path !== "null" &&
-      movie.poster_path !== null
-    ) {
+    if (movie.poster_path && movie.poster_path !== "null" && movie.poster_path !== null) {
       posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
     }
 
     let backdropUrl = "./Assets/img/NoBackdrop.gif";
-    if (
-      movie.backdrop_path &&
-      movie.backdrop_path !== "null" &&
-      movie.backdrop_path !== null
-    ) {
+    if (movie.backdrop_path && movie.backdrop_path !== "null" && movie.backdrop_path !== null) {
       backdropUrl = `https://image.tmdb.org/t/p/original${movie.backdrop_path}`;
     }
 
@@ -292,24 +253,22 @@ export async function loadMovieDetails() {
 
             <div class="details-content">
                 <div class="details-poster">
-                    <img src="${posterUrl}" alt="${movie.title}">
+                    <img src="${posterUrl}" alt="Movie poster">
                 </div>
 
                 <div class="details-info">
-                    <h1 class="details-title">${movie.title}</h1>
+                    <h1 class="details-title">${title}</h1>
 
                     <div class="details-rating">
                         <div class="rating-stars-container"></div>
-                        <span class="rating-number">${movie.vote_average.toFixed(
-                          1
-                        )}/10</span>
+                        <span class="rating-number">${Letterbox} - Letterbox rate</span>
                     </div>
 
                     <div class="details-genres">
                         ${genresHTML}
                     </div>
 
-                    <p class="details-overview">${movie.overview}</p>
+                    <p class="details-overview">${overview}</p>
 
                     <h3 class="section-title">Cast</h3>
                     <div class="details-cast">
@@ -318,30 +277,28 @@ export async function loadMovieDetails() {
 
                     <div class="details-metrics">
                         <div class="metric">
-                            <span class="metric-label">Release Date</span>
-                            <p class="metric-value">${formatDate(
-                              movie.release_date
-                            )}</p>
+                            <span class="metric-label">Release DVD date</span>
+                            <p class="metric-value">${formatDate(release_date)}</p>
                         </div>
+
+
+
                         <div class="metric">
                             <span class="metric-label">Budget</span>
-                            <p class="metric-value">${formatMoney(
-                              movie.budget
-                            )}</p>
+                            <p class="metric-value">${formattedBudget}</p>
                         </div>
                         <div class="metric">
-                            <span class="metric-label">Revenue</span>
-                            <p class="metric-value">${formatMoney(
-                              movie.revenue
-                            )}</p>
+                            <span class="metric-label">Income</span>
+                            <p class="metric-value">${formattedRevenue}</p>
                         </div>
                         <div class="metric">
                             <span class="metric-label">Runtime</span>
-                            <p class="metric-value">${
-                              movie.runtime
-                                ? `${movie.runtime} min`
-                                : "Runtime not available"
-                            }</p>
+                            <p class="metric-value">${runtime}</p>
+                        </div>
+
+                        <div class="metric">
+                            <span class="metric-label">Original movie language<span>
+                            <p class="metric-value">${language}</p>
                         </div>
                     </div>
                 </div>

@@ -29,12 +29,13 @@ async function tryFetchAPI() {
   );
 
   if (!data || data === null) {
-    sendNotification(
-      "Unable to retrieve movie. Please try again later.",
-      false
-    );
-    if (erreurMessage) erreurMessage.style.display = "block";
-    if (noerreurMessage) noerreurMessage.style.display = "none";
+    sendNotification("Unable to retrieve movie. Please try again later.", false);
+    if (erreurMessage) {
+      erreurMessage.style.display = "block";
+    }
+    if (noerreurMessage) {
+      noerreurMessage.style.display = "none";
+    }
     return;
   }
 
@@ -46,21 +47,19 @@ export async function getTrendingMovies() {
   const url = `${BASE_URL}/trending/movie/day?api_key=${API_KEY}`;
   const resultat = await fetch(url);
   const data = await resultat.json();
-  const films = data.results.slice(0, 6);
+  const films = data.results.slice(0, 6); //coupe au 6 premiers films tendances
   return films;
 }
 
 export async function getMovieByName(searchInput) {
-  const url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
-    searchInput
-  )}`;
+  const url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(searchInput)}`;
   const resultat = await fetch(url);
   const data = await resultat.json();
   return data.results;
 }
 
 export async function getRandomMovies() {
-  const randomVal = Math.floor(Math.random() * 400);
+  const randomVal = Math.floor(Math.random() * 500); //prend une page au hasard entre 0 et 400, meme si ça se repete la probabilité est faible
   const url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&page=${randomVal}`;
   const resultat = await fetch(url);
   const data = await resultat.json();
