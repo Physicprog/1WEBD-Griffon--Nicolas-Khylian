@@ -51,4 +51,8 @@ To launch the project, use a local server such as:
 - Mobile and desktop optimized design
 - Accessible and intuitive interface
 
+<<<<<<< HEAD
 *Project completed as part of the 1WEBD course*
+=======
+*Project completed as part of the 1WEBD course*
+>>>>>>> b8a41a07e9e9f83a001645a97c7f576e0bfe58c3
