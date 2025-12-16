@@ -12,8 +12,10 @@ import {
   formatMoney,
   fetchCredits,
   createStarRating,
-  createBackdropImage,
-  createMovieImage,
+  createCastSection,
+  createGenresSection,
+  getPosterUrl,
+  getBackdropUrl,
 } from "./movieCard.js";
 import { getSavedMovies, clearAllMovies } from "./utils/FavLocalStorage.js";
 import { sendNotification } from "./utils/notif.js";
@@ -110,101 +112,69 @@ export function clearHistory() {
   }
 }
 
+function handleSearch(input, SearchMovie, NoSearchMovie) {
+  return async () => {
+    const value = input.value;
+
+    if (value.trim() === "") {
+      SearchMovie.innerHTML = "";
+      SearchMovie.style.display = "none";
+      if (NoSearchMovie) NoSearchMovie.style.display = "block";
+      return;
+    }
+
+    const results = await getMovieByName(value);
+
+    SearchMovie.innerHTML = "";
+    SearchMovie.className = "card-search";
+
+    const title = document.createElement("h1");
+    title.textContent = "Your movies search";
+    title.className = "search-title";
+    SearchMovie.appendChild(title);
+
+    if (results && results.length > 0) {
+      for (const movie of results) {
+        const movieCard = createMovieElement(
+          movie,
+          ["poster", "title", "rating", "overview"],
+          true,
+          "card",
+          true
+        );
+        SearchMovie.appendChild(movieCard);
+      }
+      SearchMovie.style.display = "block";
+      if (NoSearchMovie) NoSearchMovie.style.display = "none";
+    } else {
+      const noResult = document.createElement("p");
+      noResult.innerHTML =
+        "No movie found<br>Enter a correct movie name to start";
+      noResult.className = "search-message";
+      SearchMovie.appendChild(noResult);
+      if (NoSearchMovie) NoSearchMovie.style.display = "none";
+      SearchMovie.style.display = "block";
+    }
+  };
+}
+
 let searchInput = document.getElementById("site-search");
 let searchInputPage = document.getElementById("site-search-page");
 let SearchMovie = document.getElementById("searchForMovie");
 let NoSearchMovie = document.getElementById("NoSearchMovie");
 
-if (searchInput) {
-  searchInput.addEventListener("keyup", async () => {
-    const input = searchInput.value;
-
-    if (input.trim() === "") {
-      SearchMovie.innerHTML = "";
-      SearchMovie.style.display = "none";
-      if (NoSearchMovie) NoSearchMovie.style.display = "block";
-      return;
-    }
-
-    const results = await getMovieByName(input);
-
-    SearchMovie.innerHTML = "";
-    SearchMovie.className = "card-search";
-
-    const title = document.createElement("h1");
-    title.textContent = "Your movies search";
-    title.className = "search-title";
-    SearchMovie.appendChild(title);
-
-    if (results && results.length > 0) {
-      for (const movie of results) {
-        const movieCard = createMovieElement(
-          movie,
-          ["poster", "title", "rating", "overview"],
-          true,
-          "card",
-          true
-        );
-        SearchMovie.appendChild(movieCard);
-      }
-      SearchMovie.style.display = "block";
-      if (NoSearchMovie) NoSearchMovie.style.display = "none";
-    } else {
-      const noResult = document.createElement("p");
-      noResult.innerHTML =
-        "No movie found<br>Enter a correct movie name to start";
-      noResult.className = "search-message";
-      SearchMovie.appendChild(noResult);
-      if (NoSearchMovie) NoSearchMovie.style.display = "none";
-      SearchMovie.style.display = "block";
-    }
-  });
+if (searchInput && SearchMovie) {
+  searchInput.addEventListener(
+    "keyup",
+    handleSearch(searchInput, SearchMovie, NoSearchMovie)
+  );
 }
 
-if (searchInputPage) {
-  searchInputPage.addEventListener("keyup", async () => {
-    const input = searchInputPage.value;
-
-    if (input.trim() === "") {
-      SearchMovie.innerHTML = "";
-      SearchMovie.style.display = "none";
-      if (NoSearchMovie) NoSearchMovie.style.display = "block";
-      return;
-    }
-
-    const results = await getMovieByName(input);
-
-    SearchMovie.innerHTML = "";
-    SearchMovie.className = "card-search";
-
-    const title = document.createElement("h1");
-    title.textContent = "Your movies search";
-    title.className = "search-title";
-    SearchMovie.appendChild(title);
-
-    if (results && results.length > 0) {
-      for (const movie of results) {
-        const movieCard = createMovieElement(
-          movie,
-          ["poster", "title", "rating", "overview"],
-          true,
-          "card",
-          true
-        );
-        SearchMovie.appendChild(movieCard);
-      }
-      SearchMovie.style.display = "block";
-      if (NoSearchMovie) NoSearchMovie.style.display = "none";
-    } else {
-      const noResult = document.createElement("p");
-      noResult.innerHTML =
-        "No movie found<br>Enter a correct movie name to start";
-      noResult.className = "search-message";
-      SearchMovie.appendChild(noResult);
-      if (NoSearchMovie) NoSearchMovie.style.display = "none";
-      SearchMovie.style.display = "block";
-    }
-  });
+if (searchInputPage && SearchMovie) {
+  searchInputPage.addEventListener(
+    "keyup",
+    handleSearch(searchInputPage, SearchMovie, NoSearchMovie)
+  );
 }
 
 async function fetchMovieDetails(movieId) {
@@ -230,7 +200,6 @@ export async function loadMovieDetails() {
 
   try {
     const movieFromStorage = JSON.parse(selectedMovieData);
-
     const movie = await fetchMovieDetails(movieFromStorage.id);
 
     if (!movie) {
@@ -241,53 +210,20 @@ export async function loadMovieDetails() {
 
     const credits = await fetchCredits(movie.id);
 
-    let posterUrl = "./Assets/img/NoPreview.gif";
-    if (
-      movie.poster_path &&
-      movie.poster_path !== "null" &&
-      movie.poster_path !== null
-    ) {
-      posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-    }
+    // Utilise les fonctions réutilisables
+    const posterUrl = getPosterUrl(movie);
+    const backdropUrl = getBackdropUrl(movie);
 
-    let backdropUrl = "./Assets/img/NoBackdrop.gif";
-    if (
-      movie.backdrop_path &&
-      movie.backdrop_path !== "null" &&
-      movie.backdrop_path !== null
-    ) {
-      backdropUrl = `https://image.tmdb.org/t/p/original${movie.backdrop_path}`;
-    }
+    // Génère le HTML du casting avec la fonction réutilisable
+    const castSection = createCastSection(credits, true, 5);
+    const castHTML = castSection.innerHTML;
 
-    let castHTML = "";
-    if (credits && credits.cast && credits.cast.length > 0) {
-      const maxActors = 5;
-      let actorCount = credits.cast.length;
-      if (actorCount > maxActors) {
-        actorCount = maxActors;
-      }
-
-      for (let i = 0; i < actorCount; i++) {
-        const actor = credits.cast[i];
-        castHTML += `
-                    <div class="actor">
-                        <p class="actor-name">${actor.name}</p>
-                        <span class="actor-role">${actor.character}</span>
-                    </div>
-                `;
-      }
-    }
-
-    let genresHTML = "";
-    if (movie.genres && movie.genres.length > 0) {
-      for (let i = 0; i < movie.genres.length; i++) {
-        genresHTML += `<span class="genre-tag">${movie.genres[i].name}</span>`;
-      }
-    }
+    const genresSection = createGenresSection(movie.genres);
+    const genresHTML = genresSection.innerHTML;
 
     container.innerHTML = `
-            <div class="details-backdrop">
-                <img src="${backdropUrl}" alt="backdrop">
+    <div class="details-backdrop">
+        <img src="${backdropUrl}" alt="backdrop">
             </div>
 
             <div class="details-content">

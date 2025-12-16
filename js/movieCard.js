@@ -29,6 +29,26 @@ export function movieToDico(movie) {
   return dict;
 }
 
+export function getImageUrl(path, size = "w500") {
+  if (!path || path === "null" || path === null) {
+    return null;
+  }
+  const baseSize = size === "original" ? "original" : size;
+  return `https://image.tmdb.org/t/p/${baseSize}${path}`;
+}
+
+export function getPosterUrl(movie) {
+  const dict = movieToDico(movie);
+  return getImageUrl(dict.poster_path, "w500") || "./Assets/img/NoPreview.gif";
+}
+
+export function getBackdropUrl(movie) {
+  const dict = movieToDico(movie);
+  return (
+    getImageUrl(dict.backdrop_path, "original") || "./Assets/img/NoBackdrop.gif"
+  );
+}
+
 export function createRuntime(movie) {
   const dict = movieToDico(movie);
   const p = document.createElement("p");
@@ -37,51 +57,37 @@ export function createRuntime(movie) {
     p.textContent = "Runtime not available";
     return p;
   }
-  return (p.textContent = `${runtime} min`);
+  p.textContent = `${runtime} min`;
+  return p;
 }
 
 export function createFavoriteButton(movie) {
   const button = document.createElement("img");
-
   button.className = "favorite-btn";
   button.alt = "Favorite";
 
-  const savedMovies = getSavedMovies("History");
-  let isFavorite = false;
-  for (let i = 0; i < savedMovies.length; i++) {
-    if (savedMovies[i].id === movie.id) {
-      isFavorite = true;
-      break;
-    }
-  }
+  const updateButtonState = () => {
+    const savedMovies = getSavedMovies("History");
+    const isFavorite = savedMovies.some((m) => m.id === movie.id);
+    button.src = isFavorite ? "./Assets/img/1.png" : "./Assets/img/2.png";
+    return isFavorite;
+  };
 
-  if (isFavorite) {
-    button.src = "./Assets/img/1.png";
-  } else {
-    button.src = "./Assets/img/2.png";
-  }
+  updateButtonState();
 
   button.addEventListener("click", function (event) {
     event.stopPropagation();
+    const isFavorite = updateButtonState();
 
-    const savedMoviesNow = getSavedMovies("History");
-    let isFavoriteNow = false;
-    for (let i = 0; i < savedMoviesNow.length; i++) {
-      if (savedMoviesNow[i].id === movie.id) {
-        isFavoriteNow = true;
-        break;
-      }
-    }
-
-    if (isFavoriteNow) {
+    if (isFavorite) {
       removeMovie(movie.id, "History");
-      button.src = "./Assets/img/2.png";
       sendNotification(`"${movie.title}" removed from favorites!`, false, 3000);
     } else {
       saveMovie(movie, "History");
-      button.src = "./Assets/img/1.png";
       sendNotification(`"${movie.title}" added to favorites!`, true, 3000);
     }
+
+    updateButtonState();
   });
 
   return button;
@@ -93,6 +99,8 @@ export function createStarRating(movie) {
 
   const container = document.createElement("div");
   container.className = "rate";
+  container.setAttribute("data-aos", "zoom-in");
+  container.setAttribute("data-aos-duration", "2100");
 
   container.addEventListener("click", function (event) {
     event.stopPropagation();
@@ -108,19 +116,12 @@ export function createStarRating(movie) {
 
   for (let i = 1; i <= 5; i++) {
     const star = document.createElement("img");
-
-    if (i <= rate) {
-      star.src = "./Assets/img/fav.png";
-    } else {
-      star.src = "./Assets/img/nofav.png";
-    }
-
+    star.src = i <= rate ? "./Assets/img/fav.png" : "./Assets/img/nofav.png";
     star.className = "star";
     container.appendChild(star);
   }
 
   container.appendChild(createFavoriteButton(movie));
-
   return container;
 }
 
@@ -132,31 +133,16 @@ export function createLetterboxNote(movie) {
   return p;
 }
 
-export function createDVDDate(movie) {
-  const dict = movieToDico(movie);
-  const dates = dict?.release_dates;
-
-  if (!dates || dates.length === 0) {
-    const d = "Not able to get the date";
-    return d;
-  }
-
-  const d = new Date(dates[0].release_date);
-  return d.toISOString().slice(0, 10);
-}
-
 export function formatDate(dateString) {
   if (!dateString || typeof dateString !== "string") {
     console.log("invalid date format");
-    return;
+    return "Date not available";
   }
 
   const parts = dateString.split("-");
-
   if (parts.length !== 3) return dateString;
 
   const [year, month, day] = parts;
-
   return `${day}-${month}-${year}`;
 }
 
@@ -176,43 +162,76 @@ export function formatMoney(amount) {
   if (num >= 1000000) {
     return `${Math.round(num / 1000000)} Millions $`;
   }
-
   return `${num.toLocaleString()}$`;
 }
 
-export function createCastSection(credits) {
-  const section = document.createElement("div");
-  section.className = "cast-section";
-
-  if (!credits || !Array.isArray(credits.cast) || credits.cast.length === 0) {
-    return section;
-  }
-
-  const title = document.createElement("h3");
-  title.textContent = "Main actors";
-  section.appendChild(title);
-
-  const list = document.createElement("div");
-  list.className = "cast-list";
-
-  for (let i = 0; i < 5 && i < credits.cast.length; i++) {
-    list.appendChild(createActorCard(credits.cast[i]));
-  }
-
-  section.appendChild(list);
-  return section;
-}
-
-export function createActorCard(actor) {
+export function createActorCard(actor, showRole = false) {
   const card = document.createElement("div");
-  card.className = "actor-card";
+  card.className = showRole ? "actor" : "actor-card";
 
   const name = document.createElement("p");
   name.className = "actor-name";
   name.textContent = actor.name;
   card.appendChild(name);
 
+  if (showRole && actor.character) {
+    const role = document.createElement("span");
+    role.className = "actor-role";
+    role.textContent = actor.character;
+    card.appendChild(role);
+  }
+
   return card;
+}
+
+export function createCastSection(credits, showRole = false, maxActors = 5) {
+  const section = document.createElement("div");
+  section.className = showRole ? "details-cast" : "cast-section";
+
+  if (!credits || !Array.isArray(credits.cast) || credits.cast.length === 0) {
+    return section;
+  }
+
+  if (!showRole) {
+    const title = document.createElement("h3");
+    title.textContent = "Main actors";
+    section.appendChild(title);
+  }
+
+  const list = document.createElement("div");
+  list.className = showRole ? "" : "cast-list";
+
+  const actorCount = Math.min(maxActors, credits.cast.length);
+  for (let i = 0; i < actorCount; i++) {
+    list.appendChild(createActorCard(credits.cast[i], showRole));
+  }
+
+  section.appendChild(list);
+  return section;
+}
+
+export function createGenresSection(genres) {
+  const container = document.createElement("div");
+  container.className = "details-genres";
+
+  if (!genres || !Array.isArray(genres) || genres.length === 0) {
+    return container;
+  }
+
+  genres.forEach((genre) => {
+    const wrapper = document.createElement("div");
+    wrapper.setAttribute("data-aos", "zoom-in");
+    wrapper.setAttribute("data-aos-duration", "1000");
+
+    const tag = document.createElement("span");
+    tag.className = "genre-tag";
+    tag.textContent = genre.name;
+
+    wrapper.appendChild(tag);
+    container.appendChild(wrapper);
+  });
+
+  return container;
 }
 
 export function createMovieCost(movie) {
@@ -227,17 +246,6 @@ export function createMovieCost(movie) {
 
   p.textContent = cost;
   return p;
-}
-
-export async function fetchCredits(movieId) {
-  const url = `${BASE_URL}/movie/${movieId}/credits?api_key=${API_KEY}&language=en-EN`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    console.log("credit error");
-    return;
-  }
-
-  return await response.json();
 }
 
 export function createMovieGain(movie) {
@@ -265,31 +273,22 @@ export function createMovieProfit(movie) {
 }
 
 export function createMovieImage(movie) {
-  const dict = movieToDico(movie);
   const img = document.createElement("img");
-  const chemin = dict.poster_path;
+  const posterUrl = getPosterUrl(movie);
 
-  if (!chemin || chemin === "null" || chemin === null) {
-    img.src = "./Assets/img/NoPreview.gif";
+  img.src = posterUrl;
+  if (posterUrl === "./Assets/img/NoPreview.gif") {
     img.classList.add("no-preview");
-  } else {
-    img.src = "https://image.tmdb.org/t/p/w500/" + chemin;
   }
 
   return img;
 }
 
 export function createBackdropImage(movie) {
-  const dict = movieToDico(movie);
   const backdropImg = document.querySelector(".details-backdrop img");
-  const chemin = dict.backdrop_path;
+  const backdropUrl = getBackdropUrl(movie);
 
-  if (!chemin || chemin === "null" || chemin === null) {
-    backdropImg.src = "Assets/img/NoBackdrop.gif";
-  } else {
-    backdropImg.src = `https://image.tmdb.org/t/p/original${chemin}`;
-    backdropImg.style.filter = "saturate(0) contrast(1.5) blur(2px)";
-  }
+  backdropImg.src = backdropUrl;
 }
 
 export function createMovieTitle(movie) {
@@ -350,6 +349,16 @@ export function caption(movie, smallOverview = false) {
 
   p.textContent = text;
   return p;
+}
+
+export async function fetchCredits(movieId) {
+  const url = `${BASE_URL}/movie/${movieId}/credits?api_key=${API_KEY}&language=en-EN`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    console.log("credit error");
+    return null;
+  }
+  return await response.json();
 }
 
 export function createMovieElement(

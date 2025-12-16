@@ -341,6 +341,10 @@
 }
 
 @media screen and (max-width: 280px) {
+  #site-search-container {
+    height: 25vh;
+  }
+
   .navbar {
     padding: 8px;
   }
