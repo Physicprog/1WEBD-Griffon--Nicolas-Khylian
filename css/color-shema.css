@@ -5,6 +5,7 @@
   --font-color: #0a0a0a;
   --color-surface: #eaeaea;
   --color-ui-accent: #d2d2d2;
+  --color-grey-light: #5b5b5b;
   --border-color: rgba(0, 0, 0, 0.22);
 }
 
@@ -15,5 +16,6 @@
   --font-color: #fafafa;
   --color-surface: #1a1a1a;
   --color-ui-accent: #1b1b1b;
+  --color-grey-light: #bbbaba;
   --border-color: rgba(163, 163, 163, 0.22);
 }

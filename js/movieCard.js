@@ -29,6 +29,17 @@ export function movieToDico(movie) {
   return dict;
 }
 
+export function createRuntime(movie) {
+  const dict = movieToDico(movie);
+  const p = document.createElement("p");
+  const runtime = parseInt(dict.runtime);
+  if (!runtime || runtime === 0) {
+    p.textContent = "Runtime not available";
+    return p;
+  }
+  return (p.textContent = `${runtime} min`);
+}
+
 export function createFavoriteButton(movie) {
   const button = document.createElement("img");
 
@@ -404,6 +415,9 @@ export function createMovieElement(
         break;
       case "profit":
         container.appendChild(createMovieProfit(movie));
+        break;
+      case "runtime":
+        container.appendChild(createRuntime(movie));
         break;
     }
   });

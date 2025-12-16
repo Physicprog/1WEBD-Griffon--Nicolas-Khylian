@@ -10,19 +10,17 @@ body {
 .details-backdrop {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: 50vh;
   overflow: hidden;
 }
 
 .details-backdrop img {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
   min-height: 100vh;
   object-fit: cover;
   z-index: 0;
+  margin-bottom: 0;
 }
 
 .details-content {
@@ -156,7 +154,7 @@ body {
 
 .actor-role {
   font-size: 14px;
-  color: var(--color-ui-accent);
+  color: var(--color-grey-light);
 }
 
 .details-metrics {
@@ -178,7 +176,7 @@ body {
   display: block;
   font-size: 12px;
   text-transform: uppercase;
-  color: var(--color-ui-accent);
+  color: var(--color-grey-light);
   margin-bottom: 8px;
   letter-spacing: 1px;
 }

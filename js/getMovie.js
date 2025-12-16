@@ -1,9 +1,11 @@
 import {
   getTrendingMovies,
   getRandomMovies,
-  fetchMovie,
   getMovieByName,
+  API_KEY,
+  BASE_URL,
 } from "./api.js";
+
 import {
   createMovieElement,
   formatDate,
@@ -205,6 +207,16 @@ if (searchInputPage) {
   });
 }
 
+async function fetchMovieDetails(movieId) {
+  const url = `${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&language=en-EN`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    console.error("Failed to fetch movie details");
+    return null;
+  }
+  return await response.json();
+}
+
 export async function loadMovieDetails() {
   const container = document.getElementById("movieDetailsCard");
   if (!container) return;
@@ -217,7 +229,16 @@ export async function loadMovieDetails() {
   }
 
   try {
-    const movie = JSON.parse(selectedMovieData);
+    const movieFromStorage = JSON.parse(selectedMovieData);
+
+    const movie = await fetchMovieDetails(movieFromStorage.id);
+
+    if (!movie) {
+      container.innerHTML =
+        '<p class="error-message">Error loading movie details</p>';
+      return;
+    }
+
     const credits = await fetchCredits(movie.id);
 
     let posterUrl = "./Assets/img/NoPreview.gif";
@@ -241,8 +262,10 @@ export async function loadMovieDetails() {
     let castHTML = "";
     if (credits && credits.cast && credits.cast.length > 0) {
       const maxActors = 5;
-      const actorCount =
-        credits.cast.length < maxActors ? credits.cast.length : maxActors;
+      let actorCount = credits.cast.length;
+      if (actorCount > maxActors) {
+        actorCount = maxActors;
+      }
 
       for (let i = 0; i < actorCount; i++) {
         const actor = credits.cast[i];
@@ -314,7 +337,11 @@ export async function loadMovieDetails() {
                         </div>
                         <div class="metric">
                             <span class="metric-label">Runtime</span>
-                            <p class="metric-value">${movie.runtime} min</p>
+                            <p class="metric-value">${
+                              movie.runtime
+                                ? `${movie.runtime} min`
+                                : "Runtime not available"
+                            }</p>
                         </div>
                     </div>
                 </div>
@@ -328,6 +355,6 @@ export async function loadMovieDetails() {
     }
   } catch (error) {
     container.innerHTML = '<p class="error-message">Error loading movie</p>';
-    //console.error("Error:", error);
+    console.error("Error:", error);
   }
 }

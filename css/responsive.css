@@ -62,11 +62,6 @@
     padding: 8px 16px;
   }
 
-  .search-hero {
-    gap: 15px;
-    justify-content: center;
-  }
-
   .hero-text {
     align-items: center;
     gap: 20px;
@@ -76,10 +71,6 @@
     flex-direction: column;
     gap: 30px;
     padding: 30px 15px;
-  }
-
-  .details-backdrop {
-    height: 50vh;
   }
 
   .details-poster {
@@ -111,10 +102,6 @@
 
   .metric-value {
     font-size: 17px;
-  }
-
-  .details-info {
-    margin-top: 250px;
   }
 }
 
@@ -186,8 +173,9 @@
   }
 
   .search-hero {
-    gap: 10px;
+    display: flex;
     flex-direction: column;
+    gap: 30px;
   }
 
   .details-backdrop {
