@@ -39,8 +39,8 @@ View all the information about a film: synopsis, genre, actors, ratings and rele
 ## Usage
 
 To launch the project, use a local server such as:
-- **Live Server** (extension VS Code)
-- **serve** via npm
+- ***Live Server*** (extension VS Code)
+- ***serve*** via npm
 
 ## Features
 
